@@ -6,11 +6,11 @@
     xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
-  <loc>https://jaidevd.github.io/blog/rss.xml</loc>
-  <lastmod>2016-05-24T08:00:00Z</lastmod>
+  <loc>https://jaidevd.github.io/rss.xml</loc>
+  <lastmod>2016-05-28T14:46:00Z</lastmod>
  </sitemap>
  <sitemap>
-  <loc>https://jaidevd.github.io/blog/sitemap.xml</loc>
-  <lastmod>2016-05-24T08:20:00Z</lastmod>
+  <loc>https://jaidevd.github.io/sitemap.xml</loc>
+  <lastmod>2016-05-28T14:46:00Z</lastmod>
  </sitemap>
 </sitemapindex>

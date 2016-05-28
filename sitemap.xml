@@ -6,35 +6,35 @@
     xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
+  <loc>https://jaidevd.github.io/</loc>
+  <lastmod>2016-05-24T08:00:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://jaidevd.github.io/2015/</loc>
+  <lastmod>2016-05-24T08:00:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://jaidevd.github.io/archive.html</loc>
+  <lastmod>2016-05-28T14:46:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://jaidevd.github.io/blog/</loc>
   <lastmod>2016-05-24T08:00:00Z</lastmod>
  </url>
  <url>
-  <loc>https://jaidevd.github.io/blog/2015/</loc>
+  <loc>https://jaidevd.github.io/categories/</loc>
   <lastmod>2016-05-24T08:00:00Z</lastmod>
  </url>
  <url>
-  <loc>https://jaidevd.github.io/blog/archive.html</loc>
-  <lastmod>2016-05-24T08:20:00Z</lastmod>
- </url>
- <url>
-  <loc>https://jaidevd.github.io/blog/blog/</loc>
+  <loc>https://jaidevd.github.io/posts/limitations-of-the-fourier-transform-need-for-a-data-driven-approach/</loc>
   <lastmod>2016-05-24T08:00:00Z</lastmod>
  </url>
  <url>
-  <loc>https://jaidevd.github.io/blog/categories/</loc>
+  <loc>https://jaidevd.github.io/posts/organizing-a-bookshelf-with-multivariate-analysis/</loc>
   <lastmod>2016-05-24T08:00:00Z</lastmod>
  </url>
  <url>
-  <loc>https://jaidevd.github.io/blog/posts/limitations-of-the-fourier-transform-need-for-a-data-driven-approach/</loc>
-  <lastmod>2016-05-24T08:00:00Z</lastmod>
- </url>
- <url>
-  <loc>https://jaidevd.github.io/blog/posts/organizing-a-bookshelf-with-multivariate-analysis/</loc>
-  <lastmod>2016-05-24T08:00:00Z</lastmod>
- </url>
- <url>
-  <loc>https://jaidevd.github.io/blog/posts/understanding-edge-effects-in-empirical-mode-decomposition/</loc>
+  <loc>https://jaidevd.github.io/posts/understanding-edge-effects-in-empirical-mode-decomposition/</loc>
   <lastmod>2016-05-24T08:00:00Z</lastmod>
  </url>
 </urlset>
