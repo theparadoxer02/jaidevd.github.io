@@ -10,7 +10,18 @@ article: http://ogp.me/ns/article#
 <link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
 <link rel="canonical" href="https://jaidevd.github.io/posts/understanding-edge-effects-in-empirical-mode-decomposition/">
-<!--[if lt IE 9]><script src="/assets/js/html5.js"></script><![endif]--><meta name="author" content="Jaidev Deshpande">
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+    },
+    displayAlign: 'left', // Change this to 'center' to center equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script><!--[if lt IE 9]><script src="/assets/js/html5.js"></script><![endif]--><meta name="author" content="Jaidev Deshpande">
 <meta property="og:site_name" content="Broca's Brain">
 <meta property="og:title" content="Understanding Edge Effects in Empirical Mode Decomposition">
 <meta property="og:url" content="https://jaidevd.github.io/posts/understanding-edge-effects-in-empirical-mode-decomposition/">
@@ -43,14 +54,14 @@ it was just a collection ">
             
                       |  
         <a href="index.ipynb" id="sourcelink">Source</a>
+          |  
+        <a href="javascript:%24.getScript(%22/assets/js/miniPageNav.js%22);">Minimap</a>
 
             </div>
             
         </div>
         <div class="body">
-            <div tabindex="-1" id="notebook" class="border-box-sizing">
-    <div class="container" id="notebook-container">
-
+            <div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -90,9 +101,8 @@ these heuristics, this post discusses the effects that boundary conditions of
 the EMD algorithm might have on the resulting <a href="http://en.wikipedia.org/wiki/Hilbert%E2%80%93Huang_transform#Intrinsic_Mode_Functions_.28IMF.29">intrinsic mode functions</a>.</p>
 <p>Let us constuct a simple signal with two pure sinusoids with consummate
 frequencies:</p>
-<p>$ s(t) = \sin (2\pi f_{1}t) + \sin (2\pi f_{2}t)$</p>
-<p>where</p>
-<p>$ f_{1} = 10 Hz $ and $ f_{2} = 5 Hz $</p>
+$$ s(t) = \sin (2\pi f_{1}t) + \sin (2\pi f_{2}t) $$<p>where</p>
+$$ f_{1} = 10 Hz $$<p>and $$ f_{2} = 5 Hz $$</p>
 <p>To highlight the idea of how EMD processes the residue (or the trend) in a
 signal, let's add a linear ramp to the signal. (For the sake of simplicity,
 let's just add the timestamps to the signal.)</p>
@@ -104,14 +114,16 @@ let's just add the timestamps to the signal.)</p>
 <div class="input">
 <div class="prompt input_prompt">In [4]:</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+  <div class="input_area">
+    <div class=" highlight hl-ipython2"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
 </pre></div>
 
-</div>
+    <i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px">
+      Click me to hide the output</i>
+  </div>
 </div>
 </div>
 
@@ -120,12 +132,14 @@ let's just add the timestamps to the signal.)</p>
 <div class="input">
 <div class="prompt input_prompt">In [5]:</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">mpl</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">'ggplot'</span><span class="p">)</span>
+  <div class="input_area">
+    <div class=" highlight hl-ipython2"><pre><span></span><span class="n">mpl</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">'ggplot'</span><span class="p">)</span>
 <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    <i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px">
+      Click me to hide the output</i>
+  </div>
 </div>
 </div>
 
@@ -134,8 +148,8 @@ let's just add the timestamps to the signal.)</p>
 <div class="input">
 <div class="prompt input_prompt">In [6]:</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">n_points</span> <span class="o">=</span> <span class="mi">1000</span>
+  <div class="input_area">
+    <div class=" highlight hl-ipython2"><pre><span></span><span class="n">n_points</span> <span class="o">=</span> <span class="mi">1000</span>
 <span class="n">f1</span><span class="p">,</span> <span class="n">f2</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span>
 <span class="n">time_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
 <span class="n">mode1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">f1</span> <span class="o">*</span> <span class="n">time_samples</span><span class="p">)</span>
@@ -147,10 +161,15 @@ let's just add the timestamps to the signal.)</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_samples</span><span class="p">,</span> <span class="n">signal</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    <i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px">
+      Click me to hide the output</i>
+  </div>
 </div>
 </div>
 
+<div class="output_wrapper output_hidden">
+  <div class="output">
+    
 <div class="output_wrapper">
 <div class="output">
 
@@ -178,6 +197,9 @@ let's just add the timestamps to the signal.)</p>
 </div>
 </div>
 
+  </div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -193,8 +215,8 @@ let's just add the timestamps to the signal.)</p>
 <div class="input">
 <div class="prompt input_prompt">In [7]:</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">argrelmin</span><span class="p">,</span> <span class="n">argrelmax</span>
+  <div class="input_area">
+    <div class=" highlight hl-ipython2"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">argrelmin</span><span class="p">,</span> <span class="n">argrelmax</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">splrep</span><span class="p">,</span> <span class="n">splev</span>
 
 <span class="n">tol</span> <span class="o">=</span> <span class="mf">0.05</span>
@@ -240,7 +262,9 @@ let's just add the timestamps to the signal.)</p>
     <span class="k">return</span> <span class="n">imfs</span>
 </pre></div>
 
-</div>
+    <i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px">
+      Click me to hide the output</i>
+  </div>
 </div>
 </div>
 
@@ -259,8 +283,8 @@ let's just add the timestamps to the signal.)</p>
 <div class="input">
 <div class="prompt input_prompt">In [8]:</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">n_imfs</span> <span class="o">=</span> <span class="mi">2</span>
+  <div class="input_area">
+    <div class=" highlight hl-ipython2"><pre><span></span><span class="n">n_imfs</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">imfs</span> <span class="o">=</span> <span class="n">emd</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">n_imfs</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">n_imfs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_imfs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_samples</span><span class="p">,</span> <span class="n">imfs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'residue'</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_imfs</span><span class="p">):</span>
@@ -268,10 +292,15 @@ let's just add the timestamps to the signal.)</p>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'imf {}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    <i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px">
+      Click me to hide the output</i>
+  </div>
 </div>
 </div>
 
+<div class="output_wrapper output_hidden">
+  <div class="output">
+    
 <div class="output_wrapper">
 <div class="output">
 
@@ -297,6 +326,9 @@ let's just add the timestamps to the signal.)</p>
 </div>
 </div>
 
+  </div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -312,8 +344,8 @@ let's just add the timestamps to the signal.)</p>
 <div class="input">
 <div class="prompt input_prompt">In [9]:</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">n_imfs</span> <span class="o">=</span> <span class="mi">3</span>
+  <div class="input_area">
+    <div class=" highlight hl-ipython2"><pre><span></span><span class="n">n_imfs</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="n">imfs</span> <span class="o">=</span> <span class="n">emd</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">n_imfs</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">n_imfs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_imfs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_samples</span><span class="p">,</span> <span class="n">imfs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'residue'</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_imfs</span><span class="p">):</span>
@@ -321,10 +353,15 @@ let's just add the timestamps to the signal.)</p>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'imf {}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    <i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px">
+      Click me to hide the output</i>
+  </div>
 </div>
 </div>
 
+<div class="output_wrapper output_hidden">
+  <div class="output">
+    
 <div class="output_wrapper">
 <div class="output">
 
@@ -350,6 +387,9 @@ let's just add the timestamps to the signal.)</p>
 </div>
 </div>
 
+  </div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -371,8 +411,8 @@ let's just add the timestamps to the signal.)</p>
 <div class="input">
 <div class="prompt input_prompt">In [10]:</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">get_envelopes</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+  <div class="input_area">
+    <div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">get_envelopes</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">"""Compute the upper and lower envelopes of a signal."""</span>
     <span class="n">maxima</span> <span class="o">=</span> <span class="n">argrelmax</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">minima</span> <span class="o">=</span> <span class="n">argrelmin</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -395,10 +435,15 @@ let's just add the timestamps to the signal.)</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 </pre></div>
 
-</div>
+    <i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px">
+      Click me to hide the output</i>
+  </div>
 </div>
 </div>
 
+<div class="output_wrapper output_hidden">
+  <div class="output">
+    
 <div class="output_wrapper">
 <div class="output">
 
@@ -426,6 +471,9 @@ let's just add the timestamps to the signal.)</p>
 </div>
 </div>
 
+  </div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -441,8 +489,8 @@ let's just add the timestamps to the signal.)</p>
 <div class="input">
 <div class="prompt input_prompt">In [11]:</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+  <div class="input_area">
+    <div class=" highlight hl-ipython2"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_samples</span><span class="p">[:</span><span class="mi">100</span><span class="p">],</span> <span class="n">signal</span><span class="p">[:</span><span class="mi">100</span><span class="p">],</span> <span class="s1">'b'</span><span class="p">,</span>
          <span class="n">time_samples</span><span class="p">[:</span><span class="mi">100</span><span class="p">],</span> <span class="n">upper</span><span class="p">[:</span><span class="mi">100</span><span class="p">],</span> <span class="s1">'r--'</span><span class="p">,</span> <span class="n">time_samples</span><span class="p">[:</span><span class="mi">100</span><span class="p">],</span> <span class="n">lower</span><span class="p">[:</span><span class="mi">100</span><span class="p">],</span> <span class="s1">'g--'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
@@ -450,10 +498,15 @@ let's just add the timestamps to the signal.)</p>
          <span class="n">time_samples</span><span class="p">[</span><span class="mi">900</span><span class="p">:],</span> <span class="n">upper</span><span class="p">[</span><span class="mi">900</span><span class="p">:],</span> <span class="s1">'r--'</span><span class="p">,</span> <span class="n">time_samples</span><span class="p">[</span><span class="mi">900</span><span class="p">:],</span> <span class="n">lower</span><span class="p">[</span><span class="mi">900</span><span class="p">:],</span> <span class="s1">'g--'</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    <i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px">
+      Click me to hide the output</i>
+  </div>
 </div>
 </div>
 
+<div class="output_wrapper output_hidden">
+  <div class="output">
+    
 <div class="output_wrapper">
 <div class="output">
 
@@ -483,6 +536,9 @@ let's just add the timestamps to the signal.)</p>
 </div>
 </div>
 
+  </div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -505,12 +561,14 @@ let's just add the timestamps to the signal.)</p>
 <div class="input">
 <div class="prompt input_prompt">In [12]:</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="kn">from</span> <span class="nn">pyhht.utils</span> <span class="kn">import</span> <span class="n">boundary_conditions</span>
+  <div class="input_area">
+    <div class=" highlight hl-ipython2"><pre><span></span><span class="kn">from</span> <span class="nn">pyhht.utils</span> <span class="kn">import</span> <span class="n">boundary_conditions</span>
 <span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">=</span> <span class="n">boundary_conditions</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">time_samples</span><span class="p">,</span> <span class="n">nbsym</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    <i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px">
+      Click me to hide the output</i>
+  </div>
 </div>
 </div>
 
@@ -519,8 +577,8 @@ let's just add the timestamps to the signal.)</p>
 <div class="input">
 <div class="prompt input_prompt">In [13]:</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_samples</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">)</span>
+  <div class="input_area">
+    <div class=" highlight hl-ipython2"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_samples</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tmin</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="s1">'go'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'minima'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="s1">'ro'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'maxima'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="n">tmax</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">,</span><span class="s1">'dashdot'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'axis of symmetry'</span><span class="p">)</span>
@@ -528,10 +586,15 @@ let's just add the timestamps to the signal.)</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    <i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px">
+      Click me to hide the output</i>
+  </div>
 </div>
 </div>
 
+<div class="output_wrapper output_hidden">
+  <div class="output">
+    
 <div class="output_wrapper">
 <div class="output">
 
@@ -559,6 +622,9 @@ let's just add the timestamps to the signal.)</p>
 </div>
 </div>
 
+  </div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -574,8 +640,8 @@ let's just add the timestamps to the signal.)</p>
 <div class="input">
 <div class="prompt input_prompt">In [14]:</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">tck</span> <span class="o">=</span> <span class="n">splrep</span><span class="p">(</span><span class="n">tmin</span><span class="p">,</span> <span class="n">xmin</span><span class="p">)</span>
+  <div class="input_area">
+    <div class=" highlight hl-ipython2"><pre><span></span><span class="n">tck</span> <span class="o">=</span> <span class="n">splrep</span><span class="p">(</span><span class="n">tmin</span><span class="p">,</span> <span class="n">xmin</span><span class="p">)</span>
 <span class="n">lower_env</span> <span class="o">=</span> <span class="n">splev</span><span class="p">(</span><span class="n">time_samples</span><span class="p">,</span> <span class="n">tck</span><span class="p">)</span>
 <span class="n">tck</span> <span class="o">=</span> <span class="n">splrep</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span>
 <span class="n">upper_env</span> <span class="o">=</span> <span class="n">splev</span><span class="p">(</span><span class="n">time_samples</span><span class="p">,</span> <span class="n">tck</span><span class="p">)</span>
@@ -585,10 +651,15 @@ let's just add the timestamps to the signal.)</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_samples</span><span class="p">,</span> <span class="n">lower_env</span><span class="p">,</span> <span class="s1">'g-.'</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    <i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px">
+      Click me to hide the output</i>
+  </div>
 </div>
 </div>
 
+<div class="output_wrapper output_hidden">
+  <div class="output">
+    
 <div class="output_wrapper">
 <div class="output">
 
@@ -616,6 +687,9 @@ let's just add the timestamps to the signal.)</p>
 </div>
 </div>
 
+  </div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -631,8 +705,8 @@ let's just add the timestamps to the signal.)</p>
 <div class="input">
 <div class="prompt input_prompt">In [15]:</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+  <div class="input_area">
+    <div class=" highlight hl-ipython2"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_samples</span><span class="p">[:</span><span class="mi">100</span><span class="p">],</span> <span class="n">signal</span><span class="p">[:</span><span class="mi">100</span><span class="p">],</span> <span class="s1">'b'</span><span class="p">,</span>
          <span class="n">time_samples</span><span class="p">[:</span><span class="mi">100</span><span class="p">],</span> <span class="n">upper_env</span><span class="p">[:</span><span class="mi">100</span><span class="p">],</span> <span class="s1">'r--'</span><span class="p">,</span> <span class="n">time_samples</span><span class="p">[:</span><span class="mi">100</span><span class="p">],</span> <span class="n">lower_env</span><span class="p">[:</span><span class="mi">100</span><span class="p">],</span> <span class="s1">'g--'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
@@ -640,10 +714,15 @@ let's just add the timestamps to the signal.)</p>
          <span class="n">time_samples</span><span class="p">[</span><span class="mi">900</span><span class="p">:],</span> <span class="n">upper_env</span><span class="p">[</span><span class="mi">900</span><span class="p">:],</span> <span class="s1">'r--'</span><span class="p">,</span> <span class="n">time_samples</span><span class="p">[</span><span class="mi">900</span><span class="p">:],</span> <span class="n">lower_env</span><span class="p">[</span><span class="mi">900</span><span class="p">:],</span> <span class="s1">'g--'</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    <i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px">
+      Click me to hide the output</i>
+  </div>
 </div>
 </div>
 
+<div class="output_wrapper output_hidden">
+  <div class="output">
+    
 <div class="output_wrapper">
 <div class="output">
 
@@ -673,6 +752,9 @@ let's just add the timestamps to the signal.)</p>
 </div>
 </div>
 
+  </div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -688,8 +770,8 @@ let's just add the timestamps to the signal.)</p>
 <div class="input">
 <div class="prompt input_prompt">In [16]:</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="kn">from</span> <span class="nn">pyhht.utils</span> <span class="kn">import</span> <span class="n">extr</span>
+  <div class="input_area">
+    <div class=" highlight hl-ipython2"><pre><span></span><span class="kn">from</span> <span class="nn">pyhht.utils</span> <span class="kn">import</span> <span class="n">extr</span>
 
 
 <span class="k">def</span> <span class="nf">sift</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ts</span><span class="p">):</span>
@@ -728,10 +810,15 @@ let's just add the timestamps to the signal.)</p>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'imf {}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    <i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px">
+      Click me to hide the output</i>
+  </div>
 </div>
 </div>
 
+<div class="output_wrapper output_hidden">
+  <div class="output">
+    
 <div class="output_wrapper">
 <div class="output">
 
@@ -749,6 +836,9 @@ let's just add the timestamps to the signal.)</p>
 </div>
 </div>
 
+  </div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -762,18 +852,8 @@ let's just add the timestamps to the signal.)</p>
 </div>
 </div>
 </div>
-    </div>
-  </div>
-
+</div>
         </div>
-        <!-- AddThis Button BEGIN -->
-        <div class="addthis_toolbox addthis_default_style addthis_32x32_style">
-            <a class="addthis_button_twitter"></a>
-            <a class="addthis_button_google_plusone_share"></a>
-            <a class="addthis_button_compact"></a>
-            <a class="addthis_counter addthis_bubble_style"></a>
-        </div>
-        <!-- AddThis Button END -->
                 <ul class="pager hidden-print">
 <li class="next">
                 <a href="../limitations-of-the-fourier-transform-need-for-a-data-driven-approach/" rel="next" title="Limitations of the Fourier Transform: Need for a Data Driven Approach">Next post</a>
@@ -798,12 +878,24 @@ let's just add the timestamps to the signal.)</p>
     <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
 
 
-    </div>
+                    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+    },
+    displayAlign: 'left', // Change this to 'center' to center equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script>
+</div>
                     <footer id="footer"><p>Contents © 2016         <a href="mailto:deshpande.jaidev@gmail.com">Jaidev Deshpande</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             
         </footer>
 </div>
-    </section><script src="../../assets/js/all-nocdn.js" type="text/javascript"></script><script async type="text/javascript" src="//s7.addthis.com/js/addthis_widget.js"></script><script type="text/javascript">
+    </section><script src="../../assets/js/all-nocdn.js" type="text/javascript"></script><script type="text/javascript">
             $(function(){
                 $('.timeago').timeago();
             });

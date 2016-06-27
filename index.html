@@ -10,7 +10,18 @@ article: http://ogp.me/ns/article#
 <link href="assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
 <link rel="canonical" href="https://jaidevd.github.io/">
-<!--[if lt IE 9]><script src="/assets/js/html5.js"></script><![endif]--><meta name="author" content="Jaidev Deshpande">
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+    },
+    displayAlign: 'left', // Change this to 'center' to center equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script><!--[if lt IE 9]><script src="/assets/js/html5.js"></script><![endif]--><meta name="author" content="Jaidev Deshpande">
 <meta property="og:site_name" content="Broca's Brain">
 <meta property="og:title" content="Broca's Brain">
 <meta property="og:url" content="https://jaidevd.github.io/">
@@ -59,7 +70,7 @@ about these <a class="reference external" href="blog/">here</a>.</p>
             
         </footer>
 </div>
-    </section><script src="assets/js/all-nocdn.js" type="text/javascript"></script><script async type="text/javascript" src="//s7.addthis.com/js/addthis_widget.js"></script><script type="text/javascript">
+    </section><script src="assets/js/all-nocdn.js" type="text/javascript"></script><script type="text/javascript">
             $(function(){
                 $('.timeago').timeago();
             });

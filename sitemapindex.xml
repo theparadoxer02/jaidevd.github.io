@@ -6,11 +6,31 @@
     xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
+  <loc>https://jaidevd.github.io/categories/bayes.xml</loc>
+  <lastmod>2016-06-27T12:20:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://jaidevd.github.io/categories/learning.xml</loc>
+  <lastmod>2016-06-27T12:20:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://jaidevd.github.io/categories/math.xml</loc>
+  <lastmod>2016-06-27T12:20:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://jaidevd.github.io/categories/mathjax.xml</loc>
+  <lastmod>2016-06-27T12:20:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://jaidevd.github.io/categories/programming.xml</loc>
+  <lastmod>2016-06-27T12:20:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>https://jaidevd.github.io/rss.xml</loc>
-  <lastmod>2016-06-14T14:25:00Z</lastmod>
+  <lastmod>2016-06-27T12:20:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://jaidevd.github.io/sitemap.xml</loc>
-  <lastmod>2016-06-14T14:25:00Z</lastmod>
+  <lastmod>2016-06-27T12:20:00Z</lastmod>
  </sitemap>
 </sitemapindex>

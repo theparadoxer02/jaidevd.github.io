@@ -1,10 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Broca's Brain</title><link>https://jaidevd.github.io/</link><description>Thoughts on data science, machine learning and signal processing.</description><atom:link href="https://jaidevd.github.io/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Tue, 14 Jun 2016 14:30:09 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Evangelism in FOSS</title><link>https://jaidevd.github.io/posts/a-short-rant-about-foss-communities/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div&gt;&lt;p&gt;One of the most dangerous things that can affect any FOSS community is the tendency of evangelism for the sake of evangelism. Promoting the Python stack, expanding the userbase, etc, should come &lt;em&gt;only&lt;/em&gt; as a consequence of the content we produce as developers. If evangelism even remotely becomes one of your goals, your quality is sure to suffer. And it's not just the empirical evidence that prompts me to say this. It even makes logical sense. If we want to "promote" Python and related tech, our best market would be the young and unexperienced (and therefore non-opinionated) minds. But note that such audiences are also very fickle. They may not return for the next conference. And since they don't, we have to count on more fresh entries each year. And in the conference itself, since we're all acutely aware of the demographic, we spend too many talks pandering to this part of the audience.&lt;/p&gt;
-&lt;p&gt;Actually, I'll even go so far as to say that expanding the user base of a language is &lt;em&gt;not&lt;/em&gt; the purpose of a PyCon. For that we've got activities going on all year. Come on! It's a three day event that happens once a year! If you're so concerned about evangelism, focus on the local chapter meetups. PyCon isn't the place to do it. It's a place for people to get together and exchange ideas. Teaching basics gets in the way of that like nothing else.&lt;/p&gt;
-&lt;p&gt;So, in short, focus on the quality. Users will follow.&lt;/p&gt;&lt;/div&gt;</description><guid>https://jaidevd.github.io/posts/a-short-rant-about-foss-communities/</guid><pubDate>Tue, 14 Jun 2016 14:24:09 GMT</pubDate></item><item><title>Organizing a Bookshelf with Multivariate Analysis</title><link>https://jaidevd.github.io/posts/organizing-a-bookshelf-with-multivariate-analysis/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div tabindex="-1" id="notebook" class="border-box-sizing"&gt;
-    &lt;div class="container" id="notebook-container"&gt;
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Broca's Brain</title><link>https://jaidevd.github.io/</link><description>Thoughts on data science, machine learning and signal processing.</description><atom:link href="https://jaidevd.github.io/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Mon, 27 Jun 2016 12:20:32 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>ipycheckmath</title><link>https://jaidevd.github.io/posts/ipycheckmath/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;My Equation: $e^{i\pi} + 1 = 0$&lt;/p&gt;
 
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 &lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Courtesy of MathJax, you can include mathematical expressions both inline: 
+$e^{i\pi} + 1 = 0$  and displayed:&lt;/p&gt;
+$$e^x=\sum_{i=0}^\infty \frac{1}{i!}x^i$$
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [ ]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+  &lt;div class="input_area"&gt;
+    &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px"&gt;
+      Click me to hide the output&lt;/i&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;&lt;/div&gt;</description><guid>https://jaidevd.github.io/posts/ipycheckmath/</guid><pubDate>Mon, 27 Jun 2016 12:12:46 GMT</pubDate></item><item><title>rstmath</title><link>https://jaidevd.github.io/posts/rstmath/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div&gt;&lt;p&gt;My equation: \[e^{i\pi} + 1 = 0\]&lt;/p&gt;
+&lt;p&gt;My equation: \[ e^{i\pi} + 1 = 0 \]&lt;/p&gt;
+&lt;div class="math"&gt;
+\begin{equation*}
+e^{i\pi} + 1 = 0
+\end{equation*}
+&lt;/div&gt;
+&lt;p&gt;Hello World! This is my equation &lt;span class="math"&gt;\(e^{i\pi} + 1 = 0\)&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;</description><category>mathjax</category><guid>https://jaidevd.github.io/posts/rstmath/</guid><pubDate>Mon, 27 Jun 2016 10:31:51 GMT</pubDate></item><item><title>checkmath</title><link>https://jaidevd.github.io/posts/checkmath/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;p&gt;My equation: \( e^{i\pi} + 1 = 0 \)&lt;/p&gt;</description><category>mathjax</category><guid>https://jaidevd.github.io/posts/checkmath/</guid><pubDate>Mon, 27 Jun 2016 10:27:43 GMT</pubDate></item><item><title>Understanding Allen Downey's Solution to the M&amp;M Problem</title><link>https://jaidevd.github.io/posts/understanding-allen-downeys-solution-to-the-mm-problem/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div&gt;&lt;p&gt;Allen Downey makes a very good case for learning advanced mathematics through
+programming (Check the first section of the preface of &lt;em&gt;Think Bayes&lt;/em&gt;, titled "My theory, which is mine").
+But before can hit paydirt with using the Bayes theorem in programming,
+Downey makes you go through some elementary problems in probability, which have
+to be solved by hand first, if you expect to have a clear enough understanding
+of the concept. I can vouch for this way of learning complex concepts. The way
+I learnt the backpropagation algorithm (and its derivation), was with a pen,
+paper and a calculator.&lt;/p&gt;
+&lt;p&gt;Downey is also very careful about pointing out the difference between how
+functions and operations manifest themselves in math and in programming. For
+example, a function (say, \( f(x) \)) in mathematics can be implemented in software
+by a number of things:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;An array, containing only data&lt;/li&gt;
+&lt;li&gt;A routine that takes input(s) ($x$) and provides an output(s) ($f(x)$)&lt;/li&gt;
+&lt;li&gt;A symbolic expression (commonly found in &lt;a href="https://en.wikipedia.org/wiki/Computer_algebra_system"&gt;CAS&lt;/a&gt; libraries)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Not knowing these differences can severly handicap a programmer. I, for one,
+found myself stymied multiple times in the very first chapter of &lt;em&gt;Think Bayes&lt;/em&gt;,
+even though I'm quite comfortable with what the Bayes theorem represents and
+what it means for problems where belief or confidence needs to keep changing
+with data. But here's the rub: I'm used to thinking about it very formally, in terms of
+continuous functions, not discrete structures. And that has been the downfall
+of many a programmer.&lt;/p&gt;
+&lt;p&gt;What follows is just narcissistic note-taking, which I hope won't let me forget
+what I've already learnt.&lt;/p&gt;
+&lt;h2&gt;Bayes' Theorem&lt;/h2&gt;
+&lt;p&gt;Simply put, it says that given data $D$ and a hypothesis $H$&lt;/p&gt;
+&lt;p&gt;$ P(H|D) = \frac_{}{} $&lt;/p&gt;&lt;/div&gt;</description><category>bayes</category><category>learning</category><category>math</category><category>mathjax</category><category>programming</category><guid>https://jaidevd.github.io/posts/understanding-allen-downeys-solution-to-the-mm-problem/</guid><pubDate>Sun, 19 Jun 2016 14:43:56 GMT</pubDate></item><item><title>Evangelism in FOSS</title><link>https://jaidevd.github.io/posts/a-short-rant-about-foss-communities/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div&gt;&lt;p&gt;One of the most dangerous things that can affect any FOSS community is the tendency of evangelism for the sake of evangelism. Promoting the Python stack, expanding the userbase, etc, should come &lt;em&gt;only&lt;/em&gt; as a consequence of the content we produce as developers. If evangelism even remotely becomes one of your goals, your quality is sure to suffer. And it's not just the empirical evidence that prompts me to say this. It even makes logical sense. If we want to "promote" Python and related tech, our best market would be the young and unexperienced (and therefore non-opinionated) minds. But note that such audiences are also very fickle. They may not return for the next conference. And since they don't, we have to count on more fresh entries each year. And in the conference itself, since we're all acutely aware of the demographic, we spend too many talks pandering to this part of the audience.&lt;/p&gt;
+&lt;p&gt;Actually, I'll even go so far as to say that expanding the user base of a language is &lt;em&gt;not&lt;/em&gt; the purpose of a PyCon. For that we've got activities going on all year. Come on! It's a three day event that happens once a year! If you're so concerned about evangelism, focus on the local chapter meetups. PyCon isn't the place to do it. It's a place for people to get together and exchange ideas. Teaching basics gets in the way of that like nothing else.&lt;/p&gt;
+&lt;p&gt;So, in short, focus on the quality. Users will follow.&lt;/p&gt;&lt;/div&gt;</description><guid>https://jaidevd.github.io/posts/a-short-rant-about-foss-communities/</guid><pubDate>Tue, 14 Jun 2016 14:24:09 GMT</pubDate></item><item><title>Organizing a Bookshelf with Multivariate Analysis</title><link>https://jaidevd.github.io/posts/organizing-a-bookshelf-with-multivariate-analysis/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;
 &lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
@@ -18,15 +85,20 @@
 &lt;div class="input"&gt;
 &lt;div class="prompt input_prompt"&gt;In [1]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
-    &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython2"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;IPython.display&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Image&lt;/span&gt;
+  &lt;div class="input_area"&gt;
+    &lt;div class=" highlight hl-ipython2"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;IPython.display&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Image&lt;/span&gt;
 &lt;span class="n"&gt;Image&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'images/before.jpg'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;height&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;300&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;width&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;400&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
-&lt;/div&gt;
+    &lt;i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px"&gt;
+      Click me to hide the output&lt;/i&gt;
+  &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 
+&lt;div class="output_wrapper output_hidden"&gt;
+  &lt;div class="output"&gt;
+    
 &lt;div class="output_wrapper"&gt;
 &lt;div class="output"&gt;
 
@@ -43,6 +115,9 @@
 &lt;/div&gt;
 &lt;/div&gt;
 
+  &lt;/div&gt;
+&lt;/div&gt;
+
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing text_cell rendered"&gt;
 &lt;div class="prompt input_prompt"&gt;
@@ -50,20 +125,14 @@
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;p&gt;The actual volume of books that I carried from Pune to Delhi is about twice of what is seen in the picture. My house in Delhi has six bookshelves, three in the living room and three in another room that I've made into a study. Naturally, I wanted to arrange my nearly 200 books in a manner that would be convenient to access, and such that the arrangement made some thematic sense. For example, I should not have to go to the living room to get one of my books on data analysis, and my partner shouldn't have to keep coming into the study to get one of her novels. Also, books that deal with similar subjects should naturally lie together. Obviously, arraging books semantically and such that they look good on the shelves isn't a data analysis problem as such, and even a haphazard, arbitrary arrangement of books would still work well for most practical purposes, but I still thought making it data driven would be a fun exercise.
-&lt;/p&gt;&lt;p&gt;&lt;a href="https://jaidevd.github.io/posts/organizing-a-bookshelf-with-multivariate-analysis/"&gt;Read more…&lt;/a&gt; (5 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><guid>https://jaidevd.github.io/posts/organizing-a-bookshelf-with-multivariate-analysis/</guid><pubDate>Wed, 26 Aug 2015 18:30:00 GMT</pubDate></item><item><title>Limitations of the Fourier Transform: Need for a Data Driven Approach</title><link>https://jaidevd.github.io/posts/limitations-of-the-fourier-transform-need-for-a-data-driven-approach/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div tabindex="-1" id="notebook" class="border-box-sizing"&gt;
-    &lt;div class="container" id="notebook-container"&gt;
-
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;/p&gt;&lt;p&gt;&lt;a href="https://jaidevd.github.io/posts/organizing-a-bookshelf-with-multivariate-analysis/"&gt;Read more…&lt;/a&gt; (5 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><guid>https://jaidevd.github.io/posts/organizing-a-bookshelf-with-multivariate-analysis/</guid><pubDate>Wed, 26 Aug 2015 18:30:00 GMT</pubDate></item><item><title>Limitations of the Fourier Transform: Need for a Data Driven Approach</title><link>https://jaidevd.github.io/posts/limitations-of-the-fourier-transform-need-for-a-data-driven-approach/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div class="cell border-box-sizing text_cell rendered"&gt;
 &lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;p&gt;My implementation of the Hilbert Huang transform (&lt;a href="https://github.com/jaidevd/pyhht"&gt;PyHHT&lt;/a&gt;) is quite close to a beta release. After nearly three years of inactivity, I've found some time to develop the PyHHT library in the last few weeks. In all this time many people have written to me about a lot of things - from the inability to use the module because of the lack of documentation, to comparison between the results of HHT and conventional time series analysis techniques. And now the time has come when I can no longer avoid writing the documentation. But as I write the documentation, I've found that I need to re-learn the concepts which I learned back when I started writing this module. It is out of this learning cycle that came my last &lt;a href="http://jaidevd.github.io/blog/understanding-edge-effects-in-emd/"&gt;blog post&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;This blog post is the second in a series of posts in which I will discuss HHT in detail. (After all I've always thought that blogging is a lot more fun than writing documentation. This really doesn't bode well for my software development habits, but here I am.)
-&lt;/p&gt;&lt;p&gt;&lt;a href="https://jaidevd.github.io/posts/limitations-of-the-fourier-transform-need-for-a-data-driven-approach/"&gt;Read more…&lt;/a&gt; (8 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><guid>https://jaidevd.github.io/posts/limitations-of-the-fourier-transform-need-for-a-data-driven-approach/</guid><pubDate>Sat, 20 Jun 2015 11:16:54 GMT</pubDate></item><item><title>Understanding Edge Effects in Empirical Mode Decomposition</title><link>https://jaidevd.github.io/posts/understanding-edge-effects-in-empirical-mode-decomposition/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div tabindex="-1" id="notebook" class="border-box-sizing"&gt;
-    &lt;div class="container" id="notebook-container"&gt;
-
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;/p&gt;&lt;p&gt;&lt;a href="https://jaidevd.github.io/posts/limitations-of-the-fourier-transform-need-for-a-data-driven-approach/"&gt;Read more…&lt;/a&gt; (8 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><guid>https://jaidevd.github.io/posts/limitations-of-the-fourier-transform-need-for-a-data-driven-approach/</guid><pubDate>Sat, 20 Jun 2015 11:16:54 GMT</pubDate></item><item><title>Understanding Edge Effects in Empirical Mode Decomposition</title><link>https://jaidevd.github.io/posts/understanding-edge-effects-in-empirical-mode-decomposition/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div class="cell border-box-sizing text_cell rendered"&gt;
 &lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
@@ -83,4 +152,4 @@ paper&lt;/a&gt; by Huang et
 al. The other
 parts of HHT, like the Hilbert spectrum and its time frequency representations
 are right around the corner.
-&lt;/p&gt;&lt;p&gt;&lt;a href="https://jaidevd.github.io/posts/understanding-edge-effects-in-empirical-mode-decomposition/"&gt;Read more…&lt;/a&gt; (10 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><guid>https://jaidevd.github.io/posts/understanding-edge-effects-in-empirical-mode-decomposition/</guid><pubDate>Wed, 20 May 2015 10:47:51 GMT</pubDate></item></channel></rss>
+&lt;/p&gt;&lt;p&gt;&lt;a href="https://jaidevd.github.io/posts/understanding-edge-effects-in-empirical-mode-decomposition/"&gt;Read more…&lt;/a&gt; (11 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><guid>https://jaidevd.github.io/posts/understanding-edge-effects-in-empirical-mode-decomposition/</guid><pubDate>Wed, 20 May 2015 10:47:51 GMT</pubDate></item></channel></rss>
