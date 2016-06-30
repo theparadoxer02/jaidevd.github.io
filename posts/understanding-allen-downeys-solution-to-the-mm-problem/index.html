@@ -29,10 +29,11 @@ MathJax.Hub.Config({
 programming (Check the first section of the preface of Think Bayes, titled "My theory, which is mine").
 But before can hit'>
 <meta property="og:type" content="article">
-<meta property="article:published_time" content="2016-06-19T20:13:56+05:30">
+<meta property="article:published_time" content="2016-06-29T20:13:56+05:30">
 <meta property="article:tag" content="bayes">
 <meta property="article:tag" content="learning">
 <meta property="article:tag" content="math">
+<meta property="article:tag" content="mathjax">
 <meta property="article:tag" content="programming">
 </head>
 <body>
@@ -51,7 +52,7 @@ But before can hit'>
 
         <div class="meta">
             <div class="authordate">
-                <time class="timeago" datetime="2016-06-19T20:13:56+05:30">2016-06-19 20:13</time>
+                <time class="timeago" datetime="2016-06-29T20:13:56+05:30">2016-06-29 20:13</time>
             
                       |  
         <a href="index.md" id="sourcelink">Source</a>
@@ -65,6 +66,7 @@ But before can hit'>
            <li><a class="tag p-category" href="../../categories/bayes/" rel="tag">bayes</a></li>
            <li><a class="tag p-category" href="../../categories/learning/" rel="tag">learning</a></li>
            <li><a class="tag p-category" href="../../categories/math/" rel="tag">math</a></li>
+           <li><a class="tag p-category" href="../../categories/mathjax/" rel="tag">mathjax</a></li>
            <li><a class="tag p-category" href="../../categories/programming/" rel="tag">programming</a></li>
         </ul>
 </div>
@@ -83,7 +85,7 @@ paper and a calculator.
 <!-- TEASER_END --></p>
 <p>Downey is also very careful about pointing out the difference between how
 functions and operations manifest themselves in math and in programming. For
-example, a function (say, \[ f(x) \]) in mathematics can be implemented in software
+example, a function (say, $f(x)$) in mathematics can be implemented in software
 by a number of things:</p>
 <ul>
 <li>An array, containing only data</li>
@@ -102,6 +104,67 @@ what I've already learnt.</p>
 <h2>Bayes' Theorem</h2>
 <p>Simply put, it says that given data $D$ and a hypothesis $H$</p>
 <p>$$ P(H|D) = \frac{P(H)P(D|H)}{P(D)} $$</p>
+<p>where
+$P(H)$ is the probability of the hypothesis, or the <em>prior</em>. $P(D|H)$ is the
+<em>likelihood</em>, the probability that a favourable outcome (or anything that is
+being observed) is true under the hypothesis $H$. $P(D)$ is the normalizing
+constant, or the probability of the data being true in any case at all. The
+significance of the normalizing constant is not immediately apparent, but we
+can think of it as follows:</p>
+<blockquote>
+<p>If there are multiple possibilities, or multiple hypothesis, then $P(D)$ is
+the probability of an observation being true under any of them.</p>
+</blockquote>
+<p>Concretely, this means that if there are $n$ hypotheses $H_{1}$ through
+$H_{n}$, then</p>
+<p>$$ P(D) = \sum_{i=1}^{n} P(H_{i}) P(D|H_{i}) $$</p>
+<h3>The M&amp;M Problem</h3>
+<p>The problem states that the distribution of colors among M&amp;Ms before and after
+1995 is as follows:</p>
+<table>
+<thead><tr>
+<th>Color</th>
+<th align="center">Before 1995</th>
+<th align="center">After 1995</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>brown</td>
+<td align="center">30 %</td>
+<td align="center">13 %</td>
+</tr>
+<tr>
+<td>yellow</td>
+<td align="center">20 %</td>
+<td align="center">14 %</td>
+</tr>
+<tr>
+<td>red</td>
+<td align="center">20 %</td>
+<td align="center">13 %</td>
+</tr>
+<tr>
+<td>green</td>
+<td align="center">10 %</td>
+<td align="center">20 %</td>
+</tr>
+<tr>
+<td>orange</td>
+<td align="center">10 %</td>
+<td align="center">16 %</td>
+</tr>
+<tr>
+<td>tan</td>
+<td align="center">10 %</td>
+<td align="center">0 %</td>
+</tr>
+<tr>
+<td>blue</td>
+<td align="center">0 %</td>
+<td align="center">24 %</td>
+</tr>
+</tbody>
+</table>
 </div>
         </div>
                 <ul class="pager hidden-print">
@@ -128,8 +191,19 @@ what I've already learnt.</p>
     <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
 
 
-        
-    </div>
+                    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+    },
+    displayAlign: 'left', // Change this to 'center' to center equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script>
+</div>
                     <footer id="footer"><p>Contents © 2016         <a href="mailto:deshpande.jaidev@gmail.com">Jaidev Deshpande</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         </p>
             
         </footer>
