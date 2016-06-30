@@ -29,11 +29,10 @@ MathJax.Hub.Config({
 programming (Check the first section of the preface of Think Bayes, titled "My theory, which is mine").
 But before can hit'>
 <meta property="og:type" content="article">
-<meta property="article:published_time" content="2016-06-29T20:13:56+05:30">
+<meta property="article:published_time" content="2016-06-30T18:33:41+05:30">
 <meta property="article:tag" content="bayes">
 <meta property="article:tag" content="learning">
 <meta property="article:tag" content="math">
-<meta property="article:tag" content="mathjax">
 <meta property="article:tag" content="programming">
 </head>
 <body>
@@ -52,10 +51,10 @@ But before can hit'>
 
         <div class="meta">
             <div class="authordate">
-                <time class="timeago" datetime="2016-06-29T20:13:56+05:30">2016-06-29 20:13</time>
+                <time class="timeago" datetime="2016-06-30T18:33:41+05:30">2016-06-30 18:33</time>
             
                       |  
-        <a href="index.md" id="sourcelink">Source</a>
+        <a href="index.ipynb" id="sourcelink">Source</a>
           |  
         <a href="javascript:%24.getScript(%22/assets/js/miniPageNav.js%22);">Minimap</a>
 
@@ -66,14 +65,28 @@ But before can hit'>
            <li><a class="tag p-category" href="../../categories/bayes/" rel="tag">bayes</a></li>
            <li><a class="tag p-category" href="../../categories/learning/" rel="tag">learning</a></li>
            <li><a class="tag p-category" href="../../categories/math/" rel="tag">math</a></li>
-           <li><a class="tag p-category" href="../../categories/mathjax/" rel="tag">mathjax</a></li>
            <li><a class="tag p-category" href="../../categories/programming/" rel="tag">programming</a></li>
         </ul>
 </div>
 
         </div>
         <div class="body">
-            <div>
+            <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<!-- 
+.. title: Understanding Allen Downey's Solution to the M&M Problem
+.. slug: understanding-allen-downeys-solution-to-the-mm-problem
+.. date: 2016-06-29 20:13:56 UTC+05:30
+.. tags: learning, bayes, programming, math, mathjax
+.. category: 
+.. link: 
+.. description: 
+.. type: text
+-->
+
 <p>Allen Downey makes a very good case for learning advanced mathematics through
 programming (Check the first section of the preface of <em>Think Bayes</em>, titled "My theory, which is mine").
 But before can hit paydirt with using the Bayes theorem in programming,
@@ -101,10 +114,10 @@ continuous functions, not discrete structures. And that has been the downfall
 of many a programmer.</p>
 <p>What follows is just narcissistic note-taking, which I hope won't let me forget
 what I've already learnt.</p>
-<h2>Bayes' Theorem</h2>
+<h3 id="Bayes'-Theorem">Bayes' Theorem<a class="anchor-link" href="#Bayes'-Theorem">¶</a>
+</h3>
 <p>Simply put, it says that given data $D$ and a hypothesis $H$</p>
-<p>$$ P(H|D) = \frac{P(H)P(D|H)}{P(D)} $$</p>
-<p>where
+$$ \begin{equation} P(H|D) = \frac{P(H)P(D|H)}{P(D)} \end{equation} $$<p>where
 $P(H)$ is the probability of the hypothesis, or the <em>prior</em>. $P(D|H)$ is the
 <em>likelihood</em>, the probability that a favourable outcome (or anything that is
 being observed) is true under the hypothesis $H$. $P(D)$ is the normalizing
@@ -117,54 +130,102 @@ the probability of an observation being true under any of them.</p>
 </blockquote>
 <p>Concretely, this means that if there are $n$ hypotheses $H_{1}$ through
 $H_{n}$, then</p>
-<p>$$ P(D) = \sum_{i=1}^{n} P(H_{i}) P(D|H_{i}) $$</p>
-<h3>The M&amp;M Problem</h3>
+$$ P(D) = \sum_{i=1}^{n} P(H_{i}) P(D|H_{i}) $$<h3 id="The-M&amp;M-Problem">The M&amp;M Problem<a class="anchor-link" href="#The-M&amp;M-Problem">¶</a>
+</h3>
 <p>The problem states that the distribution of colors among M&amp;Ms before and after
 1995 is as follows:</p>
 <table>
-<thead><tr>
+<thead><tr style="text-align: right;">
 <th>Color</th>
-<th align="center">Before 1995</th>
-<th align="center">After 1995</th>
-</tr></thead>
+      <th>Before 1995</th>
+      <th>After 1995</th>
+     </tr></thead>
 <tbody>
 <tr>
 <td>brown</td>
-<td align="center">30 %</td>
-<td align="center">13 %</td>
-</tr>
+      <td>30 %</td>
+      <td>13 %</td>
+    </tr>
 <tr>
 <td>yellow</td>
-<td align="center">20 %</td>
-<td align="center">14 %</td>
-</tr>
+      <td>20 %</td>
+      <td>14 %</td>
+    </tr>
 <tr>
 <td>red</td>
-<td align="center">20 %</td>
-<td align="center">13 %</td>
-</tr>
+      <td>20 %</td>
+      <td>13 %</td>
+    </tr>
 <tr>
 <td>green</td>
-<td align="center">10 %</td>
-<td align="center">20 %</td>
-</tr>
+      <td>10 %</td>
+      <td>20 %</td>
+    </tr>
 <tr>
 <td>orange</td>
-<td align="center">10 %</td>
-<td align="center">16 %</td>
-</tr>
+      <td>10 %</td>
+      <td>16 %</td>
+    </tr>
 <tr>
 <td>tan</td>
-<td align="center">10 %</td>
-<td align="center">0 %</td>
-</tr>
+      <td>10 %</td>
+      <td>0 %</td>
+    </tr>
 <tr>
 <td>blue</td>
-<td align="center">0 %</td>
-<td align="center">24 %</td>
-</tr>
+      <td>0 %</td>
+      <td>24 %</td>
+    </tr>
 </tbody>
 </table>
+<p>We have two bags full of M&amp;Ms, one from 1994 and the other from 1996. We draw
+an M&amp;M each from the two bags, without knowing which M&amp;M came from which bag.
+One is yellow and one is green. The problem is:</p>
+<blockquote>
+<p>What is the probability that the yellow M&amp;M came from the 1994 bag?</p>
+</blockquote>
+<p>There can only be two hypotheses here:</p>
+<ul>
+<li>Hypothesis A ($H_{a}$): The yellow M&amp;M came from the 1994 bag, and the green one came from the 1996 bag.</li>
+<li>Hypothesis B ($H_{b}$): The yellow M&amp;M came from the 1996 bag, and the green one came from the 1994 bag.</li>
+</ul>
+<p>Downey also introduces a useful notation for solving such problems, where we arrange the hypotheses and their corresponding Bayesian parameters in a table as follows:</p>
+<table>
+<thead><tr style="text-align: right;">
+<th></th>
+      <th>Prior</th>
+      <th>Likelihood</th>
+      <th>Normalizing Constant</th>
+    </tr></thead>
+<tbody>
+<tr>
+<th>A</th>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+<tr>
+<th>B</th>
+      <td>?</td>
+      <td>?</td>
+      <td>?</td>
+    </tr>
+</tbody>
+</table>
+<p>As we proceed with this problem, we'll also see how it serves as a good example of the diachronic interpretation of the Bayes' theorem - i.e., how it helps us update our belief about a given hypothesis once we've seen more data.</p>
+<ol>
+<li>Our <em>priors</em> about the two hypotheses would be naive, in that we would expect both hypotheses to be equiprobable, since we haven't considered the color distribution yet. Thus, $ P(H_{a}) = P(H_{b}) = \frac{1}{2}$</li>
+<li>The likelihoods for the respective hypotheses can be readily obtained from the color distribution. Recall that $P(D|H_{a})$ is simply the probability that the observed data (one green, one yellow) is true for hypothesis $H_{a}$. Thus, $P(D|H_{a})$ equals the probability that the yellow M&amp;M is from 1994 <em>and</em> the green one is from 1996. From the table, these values are both $\frac{1}{5}$. Thus, $P(D|H_{a}) = \frac{1}{25}$. Similarly, $P(D|H_{b}) = \frac{14}{100} \times \frac{10}{100} = \frac{7}{500}$.</li>
+<li>Note that for each hypothesis, the product of the first two columns makes up the numerator of the right hand side of Bayes' equation.</li>
+</ol>
+<p>So far so good, but I was stuck for a while before I could understand Downey's explanation of how he calculated the normalizing constant for the two cases. He writes that the third column is just the sum of the products of the first two columns. This means, that the normalizing constant is just the sum of the numerators for the respective Bayes' equations for the two scenarios. So,</p>
+$$ P(D) = P(H_{a})P(D|H_{a}) + P(H_{b})P(D|H_{b})$$<p>Thus,</p>
+$$ P(D) = \frac{1}{2} \times \frac{1}{25} + \frac{1}{2} \times \frac{7}{500} = \frac{27}{1000} $$<p>The catch is that this equation is perfectly in line with the second, subject to the assumption that both hypothesis are mutually exclusive (only one can be true) and collectively exhaustive (at least one must be true).</p>
+<p>Since we now know all the values required to calculate the posteriors of both hypothesis, the rest is just arithmetic. It turns out that $P(H_{a}|D) = \frac{20}{27}$ and $P(H_{b}|D) = \frac{7}{27}$.</p>
+<p>This was so much fun on paper, I can't wait to use these methods in Python. Needless to say I'm pretty excited about working through <em>Think Bayes</em>.</p>
+
+</div>
+</div>
 </div>
         </div>
                 <ul class="pager hidden-print">
