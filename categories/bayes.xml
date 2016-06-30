@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Broca's Brain (bayes)</title><link>http://jaidevd.github.io/</link><description></description><atom:link href="http://jaidevd.github.io/categories/bayes.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><lastBuildDate>Thu, 30 Jun 2016 03:43:46 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Understanding Allen Downey's Solution to the M&amp;M Problem</title><link>http://jaidevd.github.io/posts/understanding-allen-downeys-solution-to-the-mm-problem/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div&gt;&lt;p&gt;Allen Downey makes a very good case for learning advanced mathematics through
+programming (Check the first section of the preface of &lt;em&gt;Think Bayes&lt;/em&gt;, titled "My theory, which is mine").
+But before can hit paydirt with using the Bayes theorem in programming,
+Downey makes you go through some elementary problems in probability, which have
+to be solved by hand first, if you expect to have a clear enough understanding
+of the concept. I can vouch for this way of learning complex concepts. The way
+I learnt the backpropagation algorithm (and its derivation), was with a pen,
+paper and a calculator.
+&lt;/p&gt;&lt;p&gt;&lt;a href="http://jaidevd.github.io/posts/understanding-allen-downeys-solution-to-the-mm-problem/"&gt;Read more…&lt;/a&gt; (1 min remaining to read)&lt;/p&gt;&lt;/div&gt;</description><category>bayes</category><category>learning</category><category>math</category><category>programming</category><guid>http://jaidevd.github.io/posts/understanding-allen-downeys-solution-to-the-mm-problem/</guid><pubDate>Sun, 19 Jun 2016 14:43:56 GMT</pubDate></item></channel></rss>
