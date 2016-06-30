@@ -27,7 +27,7 @@ MathJax.Hub.Config({
 <meta property="og:url" content="http://jaidevd.github.io/posts/understanding-allen-downeys-solution-to-the-mm-problem/">
 <meta property="og:description" content='Allen Downey makes a very good case for learning advanced mathematics through
 programming (Check the first section of the preface of Think Bayes, titled "My theory, which is mine").
-But before can hit'>
+But before the rea'>
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2016-06-30T18:33:41+05:30">
 <meta property="article:tag" content="bayes">
@@ -89,7 +89,7 @@ But before can hit'>
 
 <p>Allen Downey makes a very good case for learning advanced mathematics through
 programming (Check the first section of the preface of <em>Think Bayes</em>, titled "My theory, which is mine").
-But before can hit paydirt with using the Bayes theorem in programming,
+But before the reader can hit paydirt with using the Bayes theorem in programming,
 Downey makes you go through some elementary problems in probability, which have
 to be solved by hand first, if you expect to have a clear enough understanding
 of the concept. I can vouch for this way of learning complex concepts. The way
@@ -220,7 +220,7 @@ One is yellow and one is green. The problem is:</p>
 </ol>
 <p>So far so good, but I was stuck for a while before I could understand Downey's explanation of how he calculated the normalizing constant for the two cases. He writes that the third column is just the sum of the products of the first two columns. This means, that the normalizing constant is just the sum of the numerators for the respective Bayes' equations for the two scenarios. So,</p>
 $$ P(D) = P(H_{a})P(D|H_{a}) + P(H_{b})P(D|H_{b})$$<p>Thus,</p>
-$$ P(D) = \frac{1}{2} \times \frac{1}{25} + \frac{1}{2} \times \frac{7}{500} = \frac{27}{1000} $$<p>The catch is that this equation is perfectly in line with the second, subject to the assumption that both hypothesis are mutually exclusive (only one can be true) and collectively exhaustive (at least one must be true).</p>
+$$ P(D) = \frac{1}{2} \times \frac{1}{25} + \frac{1}{2} \times \frac{7}{500} = \frac{27}{1000} $$<p>The catch is that this equation is perfectly in line with the second equation, subject to the assumption that both hypothesis are mutually exclusive (only one can be true) and collectively exhaustive (at least one must be true).</p>
 <p>Since we now know all the values required to calculate the posteriors of both hypothesis, the rest is just arithmetic. It turns out that $P(H_{a}|D) = \frac{20}{27}$ and $P(H_{b}|D) = \frac{7}{27}$.</p>
 <p>This was so much fun on paper, I can't wait to use these methods in Python. Needless to say I'm pretty excited about working through <em>Think Bayes</em>.</p>
 
