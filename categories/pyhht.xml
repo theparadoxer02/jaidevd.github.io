@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0"><channel><title>Broca's Brain (pyhht)</title><link>http://jaidevd.github.io/</link><description></description><atom:link href="http://jaidevd.github.io/categories/pyhht.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Tue, 05 Jul 2016 13:44:55 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Limitations of the Fourier Transform: Need for a Data Driven Approach</title><link>http://jaidevd.github.io/posts/limitations-of-the-fourier-transform-need-for-a-data-driven-approach/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;My implementation of the Hilbert Huang transform (&lt;a href="https://github.com/jaidevd/pyhht"&gt;PyHHT&lt;/a&gt;) is quite close to a beta release. After nearly three years of inactivity, I've found some time to develop the PyHHT library in the last few weeks. In all this time many people have written to me about a lot of things - from the inability to use the module because of the lack of documentation, to comparison between the results of HHT and conventional time series analysis techniques. And now the time has come when I can no longer avoid writing the documentation. But as I write the documentation, I've found that I need to re-learn the concepts which I learned back when I started writing this module. It is out of this learning cycle that came my last &lt;a href="http://jaidevd.github.io/blog/understanding-edge-effects-in-emd/"&gt;blog post&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This blog post is the second in a series of posts in which I will discuss HHT in detail. (After all I've always thought that blogging is a lot more fun than writing documentation. This really doesn't bode well for my software development habits, but here I am.)
+&lt;/p&gt;&lt;p&gt;&lt;a href="http://jaidevd.github.io/posts/limitations-of-the-fourier-transform-need-for-a-data-driven-approach/"&gt;Read more…&lt;/a&gt; (8 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><category>emd</category><category>fourier</category><category>hilbert</category><category>pyhht</category><category>scipy</category><category>signal processing</category><guid>http://jaidevd.github.io/posts/limitations-of-the-fourier-transform-need-for-a-data-driven-approach/</guid><pubDate>Sat, 20 Jun 2015 11:16:54 GMT</pubDate></item><item><title>Understanding Edge Effects in Empirical Mode Decomposition</title><link>http://jaidevd.github.io/posts/understanding-edge-effects-in-empirical-mode-decompostion/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;It has been a little over three years since I started working on a &lt;a href="http://github.com/jaidevd/pyhht"&gt;Python
+implementation of the Hilbert Huang
+Transform&lt;/a&gt;. When I first presented it at SciPy
+India 2011
+(&lt;a href="http://urtalk.kpoint.com/kapsule/gcc-57b6c86b-2f12-4244-950c-a34360a2cc1f/t/hilberthuang-transform"&gt;video&lt;/a&gt;)
+it was just a collection of small scripts, without packaging, testing or even
+docstrings. Over time PyHHT has garnered some interest, and I have, since the
+last few weeks, found the time to regularly work on it. I have been able to
+come up with a decent implementation of &lt;a href="http://en.wikipedia.org/wiki/Hilbert%E2%80%93Huang_transform"&gt;empirical mode
+decomposition&lt;/a&gt;,
+pretty much in line with everything described in the &lt;a href="http://tec.earth.sinica.edu.tw/research/report/paper/20070711HHT.pdf"&gt;original
+paper&lt;/a&gt; by Huang et
+al. The other
+parts of HHT, like the Hilbert spectrum and its time frequency representations
+are right around the corner.
+&lt;/p&gt;&lt;p&gt;&lt;a href="http://jaidevd.github.io/posts/understanding-edge-effects-in-empirical-mode-decompostion/"&gt;Read more…&lt;/a&gt; (11 min remaining to read)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description><category>emd</category><category>pyhht</category><category>scipy</category><category>signal processing</category><guid>http://jaidevd.github.io/posts/understanding-edge-effects-in-empirical-mode-decompostion/</guid><pubDate>Fri, 18 Apr 2014 06:40:15 GMT</pubDate></item></channel></rss>

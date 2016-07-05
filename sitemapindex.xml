@@ -6,27 +6,71 @@
     xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
+  <loc>http://jaidevd.github.io/categories/analytics.xml</loc>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>http://jaidevd.github.io/categories/bayes.xml</loc>
-  <lastmod>2016-06-30T13:57:00Z</lastmod>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>http://jaidevd.github.io/categories/emd.xml</loc>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>http://jaidevd.github.io/categories/fourier.xml</loc>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>http://jaidevd.github.io/categories/hilbert.xml</loc>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://jaidevd.github.io/categories/learning.xml</loc>
-  <lastmod>2016-06-30T13:57:00Z</lastmod>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://jaidevd.github.io/categories/math.xml</loc>
-  <lastmod>2016-06-30T13:57:00Z</lastmod>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>http://jaidevd.github.io/categories/pca.xml</loc>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>http://jaidevd.github.io/categories/productivity.xml</loc>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://jaidevd.github.io/categories/programming.xml</loc>
-  <lastmod>2016-06-30T13:57:00Z</lastmod>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>http://jaidevd.github.io/categories/pyhht.xml</loc>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>http://jaidevd.github.io/categories/python.xml</loc>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>http://jaidevd.github.io/categories/scipy.xml</loc>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>http://jaidevd.github.io/categories/signal-processing.xml</loc>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>http://jaidevd.github.io/categories/statistics.xml</loc>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://jaidevd.github.io/rss.xml</loc>
-  <lastmod>2016-06-30T13:57:00Z</lastmod>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://jaidevd.github.io/sitemap.xml</loc>
-  <lastmod>2016-07-02T11:01:00Z</lastmod>
+  <lastmod>2016-07-05T13:44:00Z</lastmod>
  </sitemap>
 </sitemapindex>
