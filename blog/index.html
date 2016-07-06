@@ -344,7 +344,7 @@ $$ w_{1}x_{1} + w_{2}x_{2} = 0 $$
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As we move from thethe first to the twentieth and then to the thirtieth sample, we can see that the decision boundary is rotating counter clockwise. By the thirtieth sample, it has found that gap that separates the two blobs, so it stops making mistakes, and therefore stops learning. Now let's try and see why this will <em>always</em> happen, as long as there is such a gap to be found, irrespective of the topology of the data or the number of points in the dataset.</p>
+<p>As we move from the first to the twentieth and then to the thirtieth sample, we can see that the decision boundary is rotating counter clockwise. By the thirtieth sample, it has found the gap that separates the two blobs, so it stops making mistakes, and therefore stops learning. Now let's try and see why this will <em>always</em> happen, as long as there is such a gap to be found, irrespective of the topology of the data or the number of points in the dataset.</p>
 <h3 id="The-Proof">The Proof<a class="anchor-link" href="../posts/a-geometric-proof-of-the-perceptron-convergence-theorem/#The-Proof">¶</a>
 </h3>
 <p>We shall continue, for the sake of simplicity, our assumption of the data being centered at the origin and therefore not needing a bias term in the learning. For better visualization, we will also impose a restriction on the weight vector - that it needs to have a unit norm. Note that the magnitude of the weight vector does not matter, since it is only its gradient that actually affects the predictions, and therefore we can comfortably impose this restriction. Moreover, I'm insisting on this restriction only to make the plots look pretty.</p>
@@ -449,7 +449,7 @@ $$ w_{1}x_{1} + w_{2}x_{2} = 0 $$
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The green arrows denote the true positives, the red one denote the true negatives, the black arrow is the weight vector and the black dashed line denotes the decision boundary. Our hypothesis based on this decision boundary is equivalent to saying that any point in the upper right triangle would be assigned a positive prediction, and any point in the lower left triangle would be assigned a negative prediction. In the given dataset, this hypothesis clearly makes two mistakes - one false positive and one false negative.</p>
+<p>The green arrows denote the true positives, the red ones denote the true negatives, the black arrow is the weight vector and the black dashed line denotes the decision boundary. Our hypothesis based on this decision boundary is equivalent to saying that any point in the upper right triangle would be assigned a positive prediction, and any point in the lower left triangle would be assigned a negative prediction. In the given dataset, this hypothesis clearly makes two mistakes - one false positive and one false negative.</p>
 <p>Analogous to the previous example, we know that the perceptron will converge if the weight vector (and hence the decision boundary) keeps rotating. Let's assume that it rotates counter-clockwise. Proving the convergence, then, can be reduced into proving the following parts:</p>
 <ul>
 <li>
