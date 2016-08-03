@@ -226,6 +226,16 @@ Typical Data Processing ">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Data-Ingest-Libraries">Data Ingest Libraries<a class="anchor-link" href="#Data-Ingest-Libraries">¶</a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="A-Note-about-the-AutoML-project">A Note about the AutoML project<a class="anchor-link" href="#A-Note-about-the-AutoML-project">¶</a>
 </h2>
 <p><img src="images/automl.png" alt=""></p>
@@ -246,6 +256,41 @@ Typical Data Processing ">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Automating-Model-Selection">Automating Model Selection<a class="anchor-link" href="#Automating-Model-Selection">¶</a>
+</h2>
+<h3 id="Automating-Cross-Validation-and-Hyperparameter-Tuning">Automating Cross Validation and Hyperparameter Tuning<a class="anchor-link" href="#Automating-Cross-Validation-and-Hyperparameter-Tuning">¶</a>
+</h3>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CrossValidationTask</span><span class="p">(</span><span class="n">luigi</span><span class="o">.</span><span class="n">Task</span><span class="p">):</span>
+
+    <span class="n">estimator</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">Parameter</span><span class="p">()</span> <span class="c1"># or luigi.Target</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Run CV loop</span>
+        <span class="c1"># Export metrics for each iteration</span>
+
+
+<span class="k">class</span> <span class="nc">GridSearchTask</span><span class="p">(</span><span class="n">luigi</span><span class="o">.</span><span class="n">Task</span><span class="p">):</span>
+
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">Parameter</span><span class="p">()</span> <span class="c1"># or Target</span>
+    <span class="n">estimator</span> <span class="o">=</span> <span class="n">luigi</span><span class="o">.</span><span class="n">Parameter</span><span class="p">()</span> <span class="c1"># or Target</span>
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">()</span>
+        <span class="n">clf</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">estimator</span><span class="p">,</span> <span class="n">param_grid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+        <span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="o">...</span>
+        <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">clf</span><span class="o">.</span><span class="n">best_estimator_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">())</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Visualizing-(Data-&amp;-ML-performance)">Visualizing (Data &amp; ML performance)<a class="anchor-link" href="#Visualizing-(Data-&amp;-ML-performance)">¶</a>
 </h2>
 </div>
 </div>
@@ -270,20 +315,17 @@ Typical Data Processing ">
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In [ ]:</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
 <div class="inner_cell">
-  <div class="input_area">
-    <div class=" highlight hl-ipython2"><pre><span></span> 
-</pre></div>
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Miscellaneous-Links">Miscellaneous Links<a class="anchor-link" href="#Miscellaneous-Links">¶</a>
+</h3>
+<p><a href="http://blog.kaggle.com/2016/07/21/approaching-almost-any-machine-learning-problem-abhishek-thakur/">http://blog.kaggle.com/2016/07/21/approaching-almost-any-machine-learning-problem-abhishek-thakur/</a></p>
 
-    <i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px">
-      Click me to hide the output</i>
-  </div>
 </div>
 </div>
-
 </div>
 </div>
         </div>

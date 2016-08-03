@@ -23,7 +23,7 @@
  </url>
  <url>
   <loc>http://jaidevd.github.io/archive.html</loc>
-  <lastmod>2016-07-15T14:13:00Z</lastmod>
+  <lastmod>2016-08-03T08:13:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/blog/</loc>
@@ -31,7 +31,7 @@
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/</loc>
-  <lastmod>2016-07-15T14:13:00Z</lastmod>
+  <lastmod>2016-08-03T08:16:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/analytics/</loc>
@@ -70,8 +70,16 @@
   <lastmod>2016-07-15T14:13:00Z</lastmod>
  </url>
  <url>
+  <loc>http://jaidevd.github.io/categories/organizing/</loc>
+  <lastmod>2016-08-03T08:16:00Z</lastmod>
+ </url>
+ <url>
   <loc>http://jaidevd.github.io/categories/pca/</loc>
   <lastmod>2016-07-15T14:13:00Z</lastmod>
+ </url>
+ <url>
+  <loc>http://jaidevd.github.io/categories/personal/</loc>
+  <lastmod>2016-08-03T08:16:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/productivity/</loc>
@@ -120,6 +128,10 @@
  <url>
   <loc>http://jaidevd.github.io/posts/organizing-a-bookshelf-with-multivariate-analysis/</loc>
   <lastmod>2016-07-15T14:13:00Z</lastmod>
+ </url>
+ <url>
+  <loc>http://jaidevd.github.io/posts/playing-with-the-konmari-method/</loc>
+  <lastmod>2016-08-03T08:13:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/posts/understanding-allen-downeys-solution-to-the-mm-problem/</loc>

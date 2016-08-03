@@ -11,7 +11,7 @@
  </sitemap>
  <sitemap>
   <loc>http://jaidevd.github.io/categories/bayes.xml</loc>
-  <lastmod>2016-07-18T14:59:00Z</lastmod>
+  <lastmod>2016-07-18T15:00:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://jaidevd.github.io/categories/emd.xml</loc>
@@ -31,7 +31,7 @@
  </sitemap>
  <sitemap>
   <loc>http://jaidevd.github.io/categories/machine-learning.xml</loc>
-  <lastmod>2016-07-18T14:59:00Z</lastmod>
+  <lastmod>2016-07-18T15:00:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://jaidevd.github.io/categories/math.xml</loc>
@@ -42,12 +42,20 @@
   <lastmod>2016-07-18T14:59:00Z</lastmod>
  </sitemap>
  <sitemap>
+  <loc>http://jaidevd.github.io/categories/organizing.xml</loc>
+  <lastmod>2016-08-03T08:16:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>http://jaidevd.github.io/categories/pca.xml</loc>
   <lastmod>2016-07-15T14:13:00Z</lastmod>
  </sitemap>
  <sitemap>
+  <loc>http://jaidevd.github.io/categories/personal.xml</loc>
+  <lastmod>2016-08-03T08:16:00Z</lastmod>
+ </sitemap>
+ <sitemap>
   <loc>http://jaidevd.github.io/categories/productivity.xml</loc>
-  <lastmod>2016-07-15T14:13:00Z</lastmod>
+  <lastmod>2016-08-03T08:16:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://jaidevd.github.io/categories/programming.xml</loc>
@@ -59,7 +67,7 @@
  </sitemap>
  <sitemap>
   <loc>http://jaidevd.github.io/categories/python.xml</loc>
-  <lastmod>2016-07-18T14:59:00Z</lastmod>
+  <lastmod>2016-07-18T15:00:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://jaidevd.github.io/categories/scipy.xml</loc>
@@ -75,10 +83,10 @@
  </sitemap>
  <sitemap>
   <loc>http://jaidevd.github.io/rss.xml</loc>
-  <lastmod>2016-07-18T14:59:00Z</lastmod>
+  <lastmod>2016-08-03T08:16:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>http://jaidevd.github.io/sitemap.xml</loc>
-  <lastmod>2016-07-18T14:59:00Z</lastmod>
+  <lastmod>2016-08-03T08:16:00Z</lastmod>
  </sitemap>
 </sitemapindex>
