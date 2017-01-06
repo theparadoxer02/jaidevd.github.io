@@ -7,142 +7,138 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>http://jaidevd.github.io/</loc>
-  <lastmod>2016-10-07T03:23:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/2014/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:30:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/2015/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:30:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/2016/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:30:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/archive.html</loc>
-  <lastmod>2016-10-07T03:30:00Z</lastmod>
+  <lastmod>2017-01-06T12:30:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/blog/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/analytics/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/bayes/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/emd/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/fourier/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/hilbert/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/learning/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/machine-learning/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/math/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/neural-networks/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/organizing/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/pca/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/personal/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/productivity/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/programming/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/pyhht/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/python/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/scipy/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/signal-processing/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/categories/statistics/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
- </url>
- <url>
-  <loc>http://jaidevd.github.io/desc/</loc>
-  <lastmod>2016-10-07T03:23:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/posts/a-geometric-proof-of-the-perceptron-convergence-theorem/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/posts/a-short-rant-about-foss-communities/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/posts/limitations-of-the-fourier-transform-need-for-a-data-driven-approach/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/posts/on-the-linearity-of-bayesian-classifiers/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/posts/organizing-a-bookshelf-with-multivariate-analysis/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/posts/playing-with-the-konmari-method/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/posts/understanding-allen-downeys-solution-to-the-mm-problem/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
  <url>
   <loc>http://jaidevd.github.io/posts/understanding-edge-effects-in-empirical-mode-decompostion/</loc>
-  <lastmod>2016-10-07T03:10:00Z</lastmod>
+  <lastmod>2017-01-06T12:31:00Z</lastmod>
  </url>
 </urlset>
