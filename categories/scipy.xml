@@ -1,5 +1,753 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Broca's Brain (scipy)</title><link>https://jaidevd.github.io/</link><description></description><atom:link type="application/rss+xml" rel="self" href="https://jaidevd.github.io/categories/scipy.xml"></atom:link><language>en</language><lastBuildDate>Wed, 05 Jul 2017 06:50:34 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Limitations of the Fourier Transform: Need for a Data Driven Approach</title><link>https://jaidevd.github.io/posts/limitations-of-the-fourier-transform-need-for-a-data-driven-approach/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+<?xml-stylesheet type="text/xsl" href="../assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Broca's Brain (Posts about scipy)</title><link>https://jaidevd.github.io/</link><description></description><atom:link href="https://jaidevd.github.io/categories/scipy.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><lastBuildDate>Fri, 17 Aug 2018 14:07:29 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Weighted Loss Functions for Instance Segmentation</title><link>https://jaidevd.github.io/posts/weighted-loss-functions-for-instance-segmentation/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;This post is a follow up to my talk, &lt;em&gt;Practical Image Classification &amp;amp; Object Detection&lt;/em&gt; at PyData Delhi 2018. You can watch the talk here,&lt;/p&gt;
+&lt;iframe width="560" height="315" src="https://www.youtube.com/embed/mCQYXHJKZW8?start=5351" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen&gt;&lt;/iframe&gt;&lt;p&gt;&lt;br&gt;
+and see the slides here:&lt;/p&gt;
+&lt;script async class="speakerdeck-embed" data-id="43741543531849cd83452ef9a55aa9fe" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"&gt;&lt;/script&gt;&lt;p&gt;&lt;br&gt;
+I spoke at length about the different kinds of problems in computer vision and how they are interpreted in deep learning architectures. I spent a fair bit of time on instance and semantic segmentation (for an introduction to these problems, watch &lt;a href="https://cs.stanford.edu/people/jcjohns/"&gt;Justin Johnson&lt;/a&gt;'s lecture from the Stanford CS231 course &lt;a href="https://www.youtube.com/watch?v=nDPWywWRIRo"&gt;here&lt;/a&gt;). In short, semantic segmentation deals with designating each pixel of an image as belonging to a class, and instance segmentation deals with identifying which instance of a class each pixel belongs to. The following images show an example of semantic versus instance segmentation.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://jaidevd.github.io/images/segmentation.png"&gt;
+&lt;br&gt;
+At the outset, a semantic segmentation output can be converted to an instance segmentation output by detecting boundaries and labeling each enclosing object individually. Semantic segmentation is essentially a classification problem that is applied at each pixel of and image, and can be evaluated with any suitable classification metric. A useful metric to evaluate how capable a model is of learning the boundaries that are required for instance segmentation is called mAP of IoU - mean average precision of the intersection over union. This metric is designed specifically to evaluate instance segmentation performance. Here's a brief explanation of how it works.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Imagine that we're solving a binary semantic segmentation problem, where the task is to simply predict if a pixel belongs to the background or foreground. We first create, as the ground truth, an image with two circular objects in it. Note that the circles, at the point where they are closest to each other, are separated by very few pixels.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [1]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+  &lt;div class="input_area"&gt;
+    &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;plt&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;skimage&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;draw&lt;/span&gt;
+&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="k"&gt;matplotlib&lt;/span&gt; inline
+
+&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;zeros&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="mi"&gt;256&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;256&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;cy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;80&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;80&lt;/span&gt;
+&lt;span class="n"&gt;radius&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;64&lt;/span&gt;
+&lt;span class="n"&gt;cy2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cx2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cy&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;cx&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;radius&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="n"&gt;o1r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;o1c&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;draw&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;circle&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;radius&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;o2r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;o2c&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;draw&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;circle&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cy2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cx2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;radius&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;o1r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;o1c&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;o2r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;o2c&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;figure&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;figsize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;imshow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'off'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;title&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'Ground Truth'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;fontsize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px"&gt;
+      Click me to hide the output&lt;/i&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper output_hidden"&gt;
+  &lt;div class="output"&gt;
+    
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+&lt;div class="prompt"&gt;&lt;/div&gt;
+
+
+
+&lt;div class="output_png output_subarea "&gt;
+&lt;img src="data:image/png;base64,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%0Arl+5b2eCNwbRiwOxG0bO25vgNSB6wyJ2w8r1dT2CNw+iNwxiF4/cxoDgLYDo9YvYxSensSB4EyB6%0A/SB28cplTNz/Lu2kqtHLZfBjwK+LpWP91i3J//BnhjeF1Ac9FsQuPamPEcGbEtGbDdsPQyB4M1i1%0AfI4Dd5GatlnqMwdPUh4rgtcCojeZptClfAB5leqYEbyWMNtrxqwuTymOH+/StoyPVryAHwCIDTM8%0AAG4QvI54n91M8s8oIn2pjSPB65DH1/Umec6pHSSYX0rjyWt4Pcj9tzS8RR3pIng9yyV+00Yu5eeM%0AZqn82hnBG1Bq8UthhwbmQ/AiEePvlbYduBieE7qTwiyP4EVqiADGvrMCsyJ4iUg9RszufIh9lsfH%0AUgC4QfDQOWZ3vsQ83gQPgBsED52K+ac9uhPruBM8AG4QPABuEDx0JtbTGvQjxr9mTfAAuEHwALhB%0A8AC4QfDQidheu8FwYtoXCB4ANwgeADcIHgA3CB5aF9NrNohDLPsEwQPgBsED4AbBA+AGwQPgBsED%0A4AbBQ6tieTcO8Ylh3yB4ANwgeADcIHgA3CB4ANwgeADcIHgA3CB4ANwgeADcIHgA3CB4ANwgeADc%0AIHgA3CB4ANwgeADcIHgA3CB4ANwgeGjVquVzQ68CIhXDvkHwALhB8AC4QfAAuEHwALhB8AC4QfAA%0AuEHw0LoYPn6AuMSyTxA8AG4QPABuEDwAbhA8dCKW12wwvJj2BYIHwA2CB8ANgofOxHQqg/6tWj4X%0A3T5A8AC4QfAAuEHw0KnYTmnQj1jHneABcIPgoXOx/rRHN2Ieb4IHwA2Ch17E/FMf7Yl9nAkeADcI%0AHgA3CB56E/vpDmaTwvgSPABuEDz0KoVZABYvlXEleADcIHjoXSqzAUwmpfEkeBhESgcJmqU2jgQP%0AgBsED4NJbXaAvaU4fgQPg4rxr+JiYamOGcFDFFI9gDxKeawIHgA3CB6ikfLMwYvUx4jgISqpH1A5%0Ay2FsCB6ik8OBlZtcxoTgIUq5HGA5yGksCB4ANwgeopXTzCJVuY0BwUPUcjvgUpHrB8IJHqKX44EX%0As5y3N8FDEnI+CGOS+3YmeEhG7gfj0Dxs36VDrwCwGKODcv3WLQOvST48hG6EGR6S5Okg7ZK37Ujw%0AkCxvB2vbPG4/TmmRtOpBy2nuZDyGboQZHrLh+UCelPdtxAwPWeFNjfG8h26E4CFLhK9A6PZG8JA1%0Aj+Ejcs0IHlzwED5CtzCCB1dyDB+hmxzBg0upf5yFyE2Hj6UAcIMZHtyrz5ZinfExq5sdwQNqYgkg%0AgWsfwQMW0BSeNkJI1PpF8IApEav08KYFADcIHgA3CB4ANwgeADcIHgA3CB4ANwgeADcIHgA3CB4A%0ANwgeADcIHgA3CB4ANwgeADcIHgA3CB4ANwgeADcIHgA3CB4ANwgeADcIHgA3LIQw9DoAQC+Y4QFw%0Ag+ABcIPgAXCD4AFwg+ABcIPgAXCD4AFwg+ABcIPgAXCD4AFwg+ABcIPgAXCD4AFwg+ABcIPgAXCD%0A4AFwg+ABcIPgAXCD4AFwg+ABcIPgAXCD4AFwg+ABcOP/P4zUctJPE8oAAAAASUVORK5CYII="&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Now imagine that we have a model that is good at semantic segmentation, but not so much at instance segmentation. So it (somewhat) wrongly predicts a labeled output that is &lt;em&gt;almost&lt;/em&gt; identical to the ground truth, except it fills the gap that separates the two circles. After all, the circles are &lt;em&gt;almost&lt;/em&gt; touching anyway.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [2]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+  &lt;div class="input_area"&gt;
+    &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;skimage.morphology&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;binary_dilation&lt;/span&gt;
+
+&lt;span class="n"&gt;prediction&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;binary_dilation&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;figure&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;figsize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;imshow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;prediction&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'off'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;title&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'Prediction'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;fontsize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px"&gt;
+      Click me to hide the output&lt;/i&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper output_hidden"&gt;
+  &lt;div class="output"&gt;
+    
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+&lt;div class="prompt"&gt;&lt;/div&gt;
+
+
+
+&lt;div class="output_png output_subarea "&gt;
+&lt;img src="data:image/png;base64,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"&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Since this a binary classification problem, and we can tell that there is clear class imbalance, let's use the &lt;a href="http://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html"&gt;F1 score&lt;/a&gt; to evaluate our prediction.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [3]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+  &lt;div class="input_area"&gt;
+    &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.metrics&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;f1_score&lt;/span&gt;
+
+&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f1_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ravel&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;prediction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ravel&lt;/span&gt;&lt;span class="p"&gt;()))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px"&gt;
+      Click me to hide the output&lt;/i&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper output_hidden"&gt;
+  &lt;div class="output"&gt;
+    
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+&lt;div class="prompt"&gt;&lt;/div&gt;
+
+&lt;div class="output_subarea output_stream output_stdout output_text"&gt;
+&lt;pre&gt;0.9860563110515227
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;That's not bad at all. There are a very small number of pixels where the model is mistaken - the ones in the area where the circles are not supposed to be touching. Let's take a look at how well the other metric - mAP of IoU - does with this prediction. Here are a couple of functions that implement the mAP of IoU computation. Followed by a detailed explanation of the metric.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [4]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+  &lt;div class="input_area"&gt;
+    &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;iou&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;masks_true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;masks_pred&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="sd"&gt;"""&lt;/span&gt;
+&lt;span class="sd"&gt;    Get the IOU between each predicted mask and each true mask.&lt;/span&gt;
+
+&lt;span class="sd"&gt;    Parameters&lt;/span&gt;
+&lt;span class="sd"&gt;    ----------&lt;/span&gt;
+
+&lt;span class="sd"&gt;    masks_true : array-like&lt;/span&gt;
+&lt;span class="sd"&gt;        A 3D array of shape (n_true_masks, image_height, image_width)&lt;/span&gt;
+&lt;span class="sd"&gt;    masks_pred : array-like&lt;/span&gt;
+&lt;span class="sd"&gt;        A 3D array of shape (n_predicted_masks, image_height, image_width)&lt;/span&gt;
+
+&lt;span class="sd"&gt;    Returns&lt;/span&gt;
+&lt;span class="sd"&gt;    -------&lt;/span&gt;
+&lt;span class="sd"&gt;    array-like&lt;/span&gt;
+&lt;span class="sd"&gt;        A 2D array of shape (n_true_masks, n_predicted_masks), where&lt;/span&gt;
+&lt;span class="sd"&gt;        the element at position (i, j) denotes the IoU between the `i`th true&lt;/span&gt;
+&lt;span class="sd"&gt;        mask and the `j`th predicted mask.&lt;/span&gt;
+
+&lt;span class="sd"&gt;    """&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;masks_true&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:]&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;masks_pred&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:]:&lt;/span&gt;
+        &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="ne"&gt;ValueError&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'Predicted masks have wrong shape!'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;n_true_masks&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;height&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;width&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;masks_true&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;
+    &lt;span class="n"&gt;n_pred_masks&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;masks_pred&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+    &lt;span class="n"&gt;m_true&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;masks_true&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;copy&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reshape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_true_masks&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;height&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;width&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;T&lt;/span&gt;
+    &lt;span class="n"&gt;m_pred&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;masks_pred&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;copy&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reshape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_pred_masks&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;height&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;width&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;numerator&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;m_pred&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;m_true&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;denominator&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;m_pred&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reshape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;m_true&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reshape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;numerator&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;denominator&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;numerator&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;evaluate_image&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;masks_true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;masks_pred&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;thresholds&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="sd"&gt;"""&lt;/span&gt;
+&lt;span class="sd"&gt;    Get the average precision for the true and predicted masks of a single image,&lt;/span&gt;
+&lt;span class="sd"&gt;    averaged over a set of thresholds&lt;/span&gt;
+
+&lt;span class="sd"&gt;    Parameters&lt;/span&gt;
+&lt;span class="sd"&gt;    ----------&lt;/span&gt;
+&lt;span class="sd"&gt;    masks_true : array-like&lt;/span&gt;
+&lt;span class="sd"&gt;        A 3D array of shape (n_true_masks, image_height, image_width)&lt;/span&gt;
+&lt;span class="sd"&gt;    masks_pred : array-like&lt;/span&gt;
+&lt;span class="sd"&gt;        A 3D array of shape (n_predicted_masks, image_height, image_width)&lt;/span&gt;
+
+&lt;span class="sd"&gt;    Returns&lt;/span&gt;
+&lt;span class="sd"&gt;    -------&lt;/span&gt;
+&lt;span class="sd"&gt;    float&lt;/span&gt;
+&lt;span class="sd"&gt;        The mean average precision of intersection over union between&lt;/span&gt;
+&lt;span class="sd"&gt;        all pairs of true and predicted region masks.&lt;/span&gt;
+
+&lt;span class="sd"&gt;    """&lt;/span&gt;
+    &lt;span class="n"&gt;int_o_un&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;iou&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;masks_true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;masks_pred&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;benched&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;int_o_un&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;thresholds&lt;/span&gt;
+    &lt;span class="n"&gt;tp&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;benched&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;  &lt;span class="c1"&gt;# noqa&lt;/span&gt;
+    &lt;span class="n"&gt;fp&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;benched&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;fn&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;benched&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tp&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tp&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;fp&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;fn&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px"&gt;
+      Click me to hide the output&lt;/i&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Note that the IoU between any pair of binary masks can be any real number in $[0, 1]$. Therefore, it is necessary to apply a threshold the IoUs between all pairs of predicted and true masks, to get a meaningful evaluation. The convention used by many Kaggle competitions is to have a set of thresholds from 0.5 to 0.95 in steps of 0.05. In the following cell, we create this set of thresholds and use them to evaluate the metric.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [5]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+  &lt;div class="input_area"&gt;
+    &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# make the thresholds&lt;/span&gt;
+&lt;span class="n"&gt;THRESHOLDS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;arange&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mf"&gt;0.5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;0.05&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reshape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# segment the ground truth image into constituent masks&lt;/span&gt;
+&lt;span class="n"&gt;bg&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;zeros&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;true_mask_1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;bg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;copy&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;true_mask_1&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;o1r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;o1c&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="n"&gt;true_mask_2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;bg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;copy&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;true_mask_2&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;o2r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;o2c&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="n"&gt;y_true&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;true_mask_1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;true_mask_2&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+
+&lt;span class="c1"&gt;# reshape the prediction matrix to fit the format required by the `evaluate_image` function&lt;/span&gt;
+&lt;span class="n"&gt;y_pred&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;prediction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reshape&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;prediction&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;map_iou&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;evaluate_image&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y_true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_pred&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;THRESHOLDS&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;map_iou&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px"&gt;
+      Click me to hide the output&lt;/i&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper output_hidden"&gt;
+  &lt;div class="output"&gt;
+    
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+&lt;div class="prompt"&gt;&lt;/div&gt;
+
+&lt;div class="output_subarea output_stream output_stdout output_text"&gt;
+&lt;pre&gt;0.0
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;&lt;img src="https://jaidevd.github.io/images/frustrated_jackie_chan.png"&gt;&lt;/p&gt;
+&lt;p&gt;That was by design. On careful inspection, it is apparent that both of the &lt;em&gt;true&lt;/em&gt; masks account for less than half the area occupied by the &lt;em&gt;predicted&lt;/em&gt; mask. Thus, the &lt;em&gt;predicted&lt;/em&gt; mask has in IoU of less than 0.5 with each &lt;em&gt;true&lt;/em&gt; mask. Since we start thresholding the IoU values at 0.5, the prediction did not register a true positive with either of the true masks - ultimately leading to a score of zero.&lt;/p&gt;
+&lt;p&gt;Let's try another hacked prediction, where we create two circular objects again, but this time they share the same centers as their ground truth counterparts, and have a radius that is less than the true radius by six units. Then, let's evaluate both the metrics again on these new predictions.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [6]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+  &lt;div class="input_area"&gt;
+    &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;xnew&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;zeros&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="mi"&gt;256&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;256&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;cy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;80&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;80&lt;/span&gt;
+&lt;span class="n"&gt;radius_new&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;58&lt;/span&gt;
+&lt;span class="n"&gt;cy2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cx2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cy&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;cx&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mi"&gt;64&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="n"&gt;o1r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;o1c&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;draw&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;circle&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;radius_new&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;o2r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;o2c&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;draw&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;circle&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cy2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cx2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;radius_new&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;xnew&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;o1r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;o1c&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="n"&gt;xnew&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;o2r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;o2c&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;figure&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;figsize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;imshow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;xnew&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cmap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cm&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gray&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'off'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;title&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'Another Prediction'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;fontsize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px"&gt;
+      Click me to hide the output&lt;/i&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper output_hidden"&gt;
+  &lt;div class="output"&gt;
+    
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+&lt;div class="prompt"&gt;&lt;/div&gt;
+
+
+
+&lt;div class="output_png output_subarea "&gt;
+&lt;img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATwAAAFECAYAAAC6dIKqAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz%0AAAALEgAACxIB0t1+/AAAEbFJREFUeJzt3X/wZXVdx/HXi90BIp3kh6hYspC4Ov1QdCAtlcVfTI65%0AoiRRTCwTmmOaOTYTosYyoaGo9UeNVtO2SpjMGANaNFi5a9JObeDijxQV6Gu0oYaIiPwMP/3x+dw4%0A37vnfr/39/nxfj5m7tz9nnPuOZ/7+dzP634+55zvd51SEgBEcFDTBQCAZSHwAIRB4AEIg8ADEAaB%0AByAMAg9AGAReMLZ32k62NzVdli6yvdt2Glq2pdTp9gUed8X2yqL2HwWBNwe231Y+8Mn25obLsr2U%0AY0uT5ZhWJZCrj+/b/qLtS2wf3nQZF6EuSDF/G5suQNfZtqTzJCVJlvQaSb/daKH64WpJN5Z/P17S%0AL0j6HUln2D45pXRnYyU70F5JT5N0xwKP8cIF7jsMRnize4mkTZI+JOkbks6xfXCjJeqHq1JK28vj%0AdZI2S/qSpB+X9MZmi7ZaSunelNJNKaWFBV5K6ZaU0i2L2n8UBN7sXlOe/0zS5ZKOknR63YbV6abt%0AM2zvtX2v7Tttf9T2E0e87gTbH7a93/aDtv+7/HzC0HYrki4sP+6qTgtH7PfXbX/B9v22v2n7T23/%0AyIhtf9T2H9m+1fYDtr9t++O2T1rnff6y7X+1fc8s56BSSvcof6lI0smVY+0uxzrY9u/a/kop386h%0AMp1le5ftu8r7/bLtt9s+ZMT7/SXbN9i+z/a3bF9m+5gR2448h2f7CNvvLFPye21/1/bnyvT8h21v%0AKu1zStm+OpXfXdlP7Tk824fYPr+0472277b9Gduvrtl2U9nvzvLvj9q+o9TH9bZfVvf++oQp7Qxs%0AP07SyyV9NaW0x/bdkt4i6bWSrljjpa8vr/u4pE9L+hlJZ0p6uu1npJQeqBzjJEn/IOnRZfsvSXqq%0ApLMlbbX9opTSv5XN/1DSK5Q7z4ckraxRhvdIOk3SJyR9UtKpyuH9ZEkvGHqfzyzbHCHpWklXKgf7%0AKyRdZ/v0lNI1Ncd4i6QXl2PsklQbphNwea4L8L+WdJKkv5N0laRvVcq/Q9K5kv6rbHeXpGdL+j1J%0AL7T94pTS/1a2f7Ok95ftPlyeT5O0R9J3xy6sfZzy+z5W0g2SPqA8yHiKpDdL+mDZ90WStpXtLqrs%0A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%0ATkSuQmCC"&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [7]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+  &lt;div class="input_area"&gt;
+    &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# segment the predicted image into constituent masks&lt;/span&gt;
+&lt;span class="n"&gt;bg&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;zeros&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;xnew&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;predicted_mask_1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;bg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;copy&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;predicted_mask_1&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;o1r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;o1c&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="n"&gt;predicted_mask_2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;bg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;copy&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;predicted_mask_2&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;o2r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;o2c&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="n"&gt;y_pred&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;predicted_mask_1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;predicted_mask_2&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+
+&lt;span class="n"&gt;fscore&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;f1_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y_true&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ravel&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;y_pred&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ravel&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"F1 Score: &lt;/span&gt;&lt;span class="si"&gt;{}&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fscore&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="n"&gt;map_iou&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;evaluate_image&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y_true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_pred&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;THRESHOLDS&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"MAP of IoU: &lt;/span&gt;&lt;span class="si"&gt;{}&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;map_iou&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px"&gt;
+      Click me to hide the output&lt;/i&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper output_hidden"&gt;
+  &lt;div class="output"&gt;
+    
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+&lt;div class="prompt"&gt;&lt;/div&gt;
+
+&lt;div class="output_subarea output_stream output_stdout output_text"&gt;
+&lt;pre&gt;F1 Score: 0.9014126584439418
+MAP of IoU: 0.7
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;The pixelwise accuracy (the F1 score) has taken a hit, since the prediction has lost two circular rings surrounding the true masks, but is still not bad. However, the IoU has shot up disproportionately! This shows that the MAP of IoU penalizes incorrect region separation a lot more than it rewards pixelwise correctness.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;As a more general example, suppose we have $K$ true masks, and $L$ predicted masks. Then, in order to calculate the MAP of IoU, we construct a matrix $I \in \mathbb R^{K \times L}$ as follows:
+&lt;br&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;
+&lt;th style="text-align:center"&gt;&lt;/th&gt;
+&lt;th style="text-align:center"&gt;$p_{1}$&lt;/th&gt;
+&lt;th style="text-align:center"&gt;$p_{2}$&lt;/th&gt;
+&lt;th style="text-align:center"&gt;$p_{3}$&lt;/th&gt;
+&lt;th style="text-align:center"&gt;$…$&lt;/th&gt;
+&lt;th style="text-align:center"&gt;$p_{l}$&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style="text-align:center"&gt;$a_{1}$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{11}$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{12}$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{13}$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$…$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{1L}$&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="text-align:center"&gt;$a_{2}$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{21}$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{22}$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{23}$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$…$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{2L}$&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="text-align:center"&gt;$a_{3}$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{31}$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{32}$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{33}$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$…$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{3L}$&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="text-align:center"&gt;…&lt;/td&gt;
+&lt;td style="text-align:center"&gt;…&lt;/td&gt;
+&lt;td style="text-align:center"&gt;…&lt;/td&gt;
+&lt;td style="text-align:center"&gt;…&lt;/td&gt;
+&lt;td style="text-align:center"&gt;…&lt;/td&gt;
+&lt;td style="text-align:center"&gt;…&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="text-align:center"&gt;$a_K$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{K1}$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{K2}$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{K3}$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$…$&lt;/td&gt;
+&lt;td style="text-align:center"&gt;$O_{Kl}$&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;br&gt;
+where $O_{k, l}$ is the IoU of the $k$th true mask and the $l$th predicted mask. This matrix is whatt the &lt;code&gt;iou&lt;/code&gt; function written above generates. Given our set of thresholds, $\Theta = \{0.5, 0.55, 0.6, ... 0.9, 0.95\}$, we can filter $I$ with all of them one by one. At each threshold $\theta_{i} \in \Theta$, we calculate a boolean matrix $I_{\theta_{i}} = I &amp;gt; \theta_{i}$. Using this matrix, we compute the following values:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$t^{+}(\theta_{i})$: The number of true positives - the number of predicted masks that found a match with a true mask. This is equal to the number of rows in $I_{\theta_{i}}$ that have at least one positive value.&lt;/li&gt;
+&lt;li&gt;$f^{+}(\theta_{i})$: The number of false positives - the number of predicted masks that found no match with a true mask. This is equal to the number of rows in $I_{\theta_{i}}$ that have no positive value.&lt;/li&gt;
+&lt;li&gt;$f^{-}(\theta_{i})$: The number of false negatives - the number of true masks that found no predicted match. This is equal to the number of columns in $I_{\theta_{i}}$ that have no positive value.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;br&gt;
+With these values computed for all thresholds $\theta_{i} \in \Theta$, we finally calculate the MAP of IoU as follows:&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;
+$$ \cfrac{1}{|\Theta|}\sum_{\theta_{i} \in \Theta}\cfrac{t^{+}(\theta_{i})}{t^{+}(\theta_{i}) + f^{+}(\theta_{i}) + f^{-}(\theta_{i})}$$
+&lt;br&gt;
+This measure is what the &lt;code&gt;evaluate_image&lt;/code&gt; function written above calculates.&lt;/p&gt;
+&lt;p&gt;A popular neural network architecture to perform semantic / instance segmentation is the UNet:
+&lt;img src="https://jaidevd.github.io/images/unet.png"&gt;
+&lt;br&gt;
+It puts together the best properties of a network that are useful for pixel segmentation:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;It is fully convolutional&lt;/li&gt;
+&lt;li&gt;It doesn't suffer because of the size of the image&lt;/li&gt;
+&lt;li&gt;It incorporates learnable upsampling&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;br&gt;
+A Keras implementation of a typical UNet is provided &lt;a href="https://github.com/jaidevd/jaidevd.github.io/blob/source/blog/posts/code/unet.py"&gt;here&lt;/a&gt;. This model can be compiled and trained as usual, with a suitable optimizer and loss. For semantic segmentation, the obvious choice is the categorical crossentropy loss. For instance segmentation, however, as we have demonstrated, pixelwise accuracy is not enough, and the model must learn the separation between nearby objects. Normally such separation can be done with &lt;a href="https://en.wikipedia.org/wiki/Mathematical_morphology"&gt;morphological operations&lt;/a&gt; on the images, but these operations cannot easily be made a part of the learning of the model. So the alternative is to force the network to learn region separations in an entirely data-driven manner. The &lt;a href="https://arxiv.org/abs/1505.04597"&gt;UNet paper&lt;/a&gt; provides an interesting way of doing this - introducing pre-computed weight maps into the loss function which penalizes the loss near the boundaries of regions more than elsewhere. These weight maps are calculated as follows:&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;
+$$ w(\mathbf{x}) = w_{c}(\mathbf{x}) + w_{0} \times exp \Biggl( -\frac{(d_{1}(\mathbf{x}) + d_{2}(\mathbf{x}))^2}{2\sigma^2} \Biggr)$$
+&lt;br&gt;
+Here, $w_{c}$, $d_{1}$ and $d_{2}$ are all functions over a two dimensional image such that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$w_{c}: \mathbb R^{m\times n} \rightarrow \mathbb R^{m\times n}$ is the class probability map.&lt;/li&gt;
+&lt;li&gt;$d_{1}: \mathbb R^{m\times n} \rightarrow \mathbb R^{m\times n}$ is the distance to the border of the nearest cell,&lt;/li&gt;
+&lt;li&gt;$d_{2}: \mathbb R^{m\times n} \rightarrow \mathbb R^{m\times n}$ is the distance to the border of the second nearest cell.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;br&gt;
+A vectorized implementation of $w$ is provided below in the &lt;code&gt;make_weight_map&lt;/code&gt; function.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [8]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+  &lt;div class="input_area"&gt;
+    &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;skimage.segmentation&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;find_boundaries&lt;/span&gt;
+
+&lt;span class="n"&gt;w0&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;
+&lt;span class="n"&gt;sigma&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;make_weight_map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;masks&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="sd"&gt;"""&lt;/span&gt;
+&lt;span class="sd"&gt;    Generate the weight maps as specified in the UNet paper&lt;/span&gt;
+&lt;span class="sd"&gt;    for a set of binary masks.&lt;/span&gt;
+&lt;span class="sd"&gt;    &lt;/span&gt;
+&lt;span class="sd"&gt;    Parameters&lt;/span&gt;
+&lt;span class="sd"&gt;    ----------&lt;/span&gt;
+&lt;span class="sd"&gt;    masks: array-like&lt;/span&gt;
+&lt;span class="sd"&gt;        A 3D array of shape (n_masks, image_height, image_width),&lt;/span&gt;
+&lt;span class="sd"&gt;        where each slice of the matrix along the 0th axis represents one binary mask.&lt;/span&gt;
+
+&lt;span class="sd"&gt;    Returns&lt;/span&gt;
+&lt;span class="sd"&gt;    -------&lt;/span&gt;
+&lt;span class="sd"&gt;    array-like&lt;/span&gt;
+&lt;span class="sd"&gt;        A 2D array of shape (image_height, image_width)&lt;/span&gt;
+&lt;span class="sd"&gt;    &lt;/span&gt;
+&lt;span class="sd"&gt;    """&lt;/span&gt;
+    &lt;span class="n"&gt;nrows&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ncols&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;masks&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:]&lt;/span&gt;
+    &lt;span class="n"&gt;masks&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;masks&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;astype&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;distMap&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;zeros&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;nrows&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;ncols&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;masks&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]))&lt;/span&gt;
+    &lt;span class="n"&gt;X1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Y1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;meshgrid&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;arange&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;nrows&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;arange&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ncols&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="n"&gt;X1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Y1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;c_&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;X1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ravel&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;Y1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ravel&lt;/span&gt;&lt;span class="p"&gt;()]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;T&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;mask&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;enumerate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;masks&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="c1"&gt;# find the boundary of each mask,&lt;/span&gt;
+        &lt;span class="c1"&gt;# compute the distance of each pixel from this boundary&lt;/span&gt;
+        &lt;span class="n"&gt;bounds&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;find_boundaries&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mask&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;mode&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'inner'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;X2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Y2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;nonzero&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;bounds&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;xSum&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reshape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;X1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reshape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;
+        &lt;span class="n"&gt;ySum&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Y2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reshape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;Y1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reshape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;
+        &lt;span class="n"&gt;distMap&lt;/span&gt;&lt;span class="p"&gt;[:,&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;xSum&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;ySum&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;min&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;ix&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;arange&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;distMap&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;distMap&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;d1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;distMap&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ravel&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+        &lt;span class="n"&gt;border_loss_map&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;w0&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;exp&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;d1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sigma&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;distMap&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;d1_ix&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;d2_ix&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argpartition&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;distMap&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)[:,&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;T&lt;/span&gt;
+        &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;d1_ix&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;d2_ix&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argpartition&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;distMap&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)[:,&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;T&lt;/span&gt;
+        &lt;span class="n"&gt;d1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;distMap&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;ix&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;d1_ix&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+        &lt;span class="n"&gt;d2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;distMap&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;ix&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;d2_ix&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+        &lt;span class="n"&gt;border_loss_map&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;w0&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;exp&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;d1&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;d2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sigma&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+    &lt;span class="n"&gt;xBLoss&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;zeros&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;nrows&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ncols&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="n"&gt;xBLoss&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;X1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Y1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;border_loss_map&lt;/span&gt;
+    &lt;span class="c1"&gt;# class weight map&lt;/span&gt;
+    &lt;span class="n"&gt;loss&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;zeros&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;nrows&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ncols&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="n"&gt;w_1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;masks&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;loss&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;size&lt;/span&gt;
+    &lt;span class="n"&gt;w_0&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;w_1&lt;/span&gt;
+    &lt;span class="n"&gt;loss&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;masks&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;w_1&lt;/span&gt;
+    &lt;span class="n"&gt;loss&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;masks&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;w_0&lt;/span&gt;
+    &lt;span class="n"&gt;ZZ&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;xBLoss&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;loss&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;ZZ&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px"&gt;
+      Click me to hide the output&lt;/i&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Here is an example of how the weight map affects a set of masks. We generate three circular regions such that two of them are much closer to each other than the third one. The weight map functions magnifies the values in the region that is close to boundaries more than other values.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [9]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+  &lt;div class="input_area"&gt;
+    &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;44&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;47&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;47&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
+&lt;span class="n"&gt;masks&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;zeros&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;64&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;64&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;radius&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;enumerate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;rr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;draw&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;circle&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;radius&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;masks&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;rr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cc&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="n"&gt;fig&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ax1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ax2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;subplots&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ncols&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;figsize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;12&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;ax1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;imshow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;masks&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;ax1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_axis_off&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;ax1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_title&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'True Masks'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;fontsize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;15&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;weights&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;make_weight_map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;masks&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;pos&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ax2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;imshow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;weights&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;ax2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_axis_off&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;ax2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set_title&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'Weights'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;fontsize&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;15&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;fig&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;colorbar&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pos&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ax&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;ax2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+    &lt;i class="icon-hand-up icon-large" style="float:right; margin-bottom:8px; margin-right:10px"&gt;
+      Click me to hide the output&lt;/i&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="output_wrapper output_hidden"&gt;
+  &lt;div class="output"&gt;
+    
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+
+
+&lt;div class="output_area"&gt;
+&lt;div class="prompt"&gt;&lt;/div&gt;
+
+
+
+&lt;div class="output_png output_subarea "&gt;
+&lt;img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAApwAAAFBCAYAAADaA3/JAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz%0AAAALEgAACxIB0t1+/AAAHzhJREFUeJzt3XuQZFldJ/Dvr6q7p5thQGUQgQEGGcQHu4I7sAqEggYy%0AsqyooYguuuGyEj5i1zV03YUwFjA0ANdQIwxcHV1EURFQ8ckwgC/kMciALG+dgQFkeAzjyDCP7p7u%0AqrN/ZPZU3luPrKzJ21mV/fkQGVU378mbJ281kb8553d+p1prAQCAoawsugMAACw3AScAAIMScAIA%0AMCgBJwAAgxJwAgAwKAEnAACDEnAuuapqu3g8foH9e+G4D+/d4lxV1cfG5//nAO/78XleEwDY2qFF%0Ad4DBfc3E78eS/GWSn07y5xPPv/+s9miz25N8eVU9vLU2GXg+Lsl9kpxaTLcAgHkQcC651tpVZ36v%0AqruPf/3Q5PPbqaqjrbUTg3Vuw78keUeSpyf5yYnnn57ktUm+4Sz0AQAYiCl1kiRV9QPjqeuvqqq/%0ArarjSf5LVV02fv6SXvurquq3e889oareVFXHq+rGqvo/VXW3XXbh95J858S1VpN8+/j5fl+/tqr+%0ArKo+WVW3VtU7q+o7em3uVVUvHbc5UVUfraoX7/D5V6rq8nG/v2r83OOr6i1VdUtV3Tx+n6fu8vMA%0AAGMCTvpekeQPkjw5yet2+6Kq+vpx+48k+bYkP57kW5NcvstLvCrJxVX1qPHxNyS5e5I/2aLtxUne%0AlOQ/J3lqkj9N8vKq+taJNr+U5NIk/zXJkzIaOa1t+r6a5KVJvjnJ41tr76yqe42v+/7x53hakpcn%0A+fxdfh4AYMyUOn0/11r71TMHVXXfXb7uRUne0Fp7xsRrb0jyp1X1/NbaNTu9uLX2mar6y4ym0d8+%0A/vmnrbXbqqrf9rcm3mMlyd9kFIR+f5JXj089OsmLWmuvmnjpy/rvW1WHk/xOksck+brW2j+MT31Z%0AkvOT/HBr7eT4uSt3+gwAwNaMcNL359ObdFXV5yX5N0leWVWHzjwyCgST5Kt2eanfS/K0qjqa0aji%0Apun08fvdq6peXFUfS3JHRouKvjfJl0w0e1eSZ49TBS7Z6joZ/QfX7yd5VJKvnQg2k+Qfk5xI8ntV%0A9e+r6p67/AwAQI+Ak75P7+E198pouvolGQV/Zx63ZvRv7AG7vM6rk3xhRqvoK8kV27T73STfkuQF%0A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"&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Application of these weight maps to the output of neural network and then finally computing the compunded loss is somewhat involved. A fully convolutional network like the UNet - since it has no dense layers at the end - needs 1 x 1 convolutions at the end to convert the convolutions from the previous layer to produce something on which categorical softmax can work. The output layer produces a volumne of size $h \times w \times K$, where $h$ and $w$ are the image height and width respectively and $K$ is the number of classes. Denoting the &lt;em&gt;unactivated&lt;/em&gt; output of the channel correspoding to the $k$th class as $a_{k}(\mathbf{x})$, the softmax activation is computed as
+&lt;br&gt;&lt;/p&gt;
+$$ p_{k}(\mathbf{x}) = \cfrac{exp(a_{k}(\mathbf{x}))}{\sum_{k'=1}^{K}exp(a_{k'}(\mathbf{x}))} $$&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Then, a modified cross entropy loss is calculated as
+&lt;br&gt;
+$$E = \sum w(\mathbf{x})log(p_{l(\mathbf{x)}}(\mathbf{x}))$$
+&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;where $w(\mathbf{x})$ is the weight map function and $l(\mathbf{x})$ denotes the true label of each pixel, Thus, computing $E$ amounts to:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;computing the softmax activation&lt;/li&gt;
+&lt;li&gt;using the true labels as a mask for this activation, (note how the function $l(\mathbf{x})$ is used),&lt;/li&gt;
+&lt;li&gt;summing the masked output along the dimension corresponding to the $K$ and taking it's log&lt;/li&gt;
+&lt;li&gt;multiply the log output with the weight map and aggregate the result across pixels&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;br&gt;
+When using Keras with a Tensorflow backend, the crossentropy loss, by default, is a &lt;a href="https://github.com/keras-team/keras/blob/2.2.2/keras/backend/tensorflow_backend.py#L3181"&gt;manual computation of cross entropy&lt;/a&gt;, which doesn't allow for weighing the loss explicitly. The manual computation is necessary because the corresponding Tensorflow &lt;a href="https://www.tensorflow.org/api_docs/python/tf/losses/softmax_cross_entropy"&gt;loss&lt;/a&gt; expects logits, whereas Keras losses expect probabilities.&lt;/p&gt;
+&lt;p&gt;Besides, it is clear that the loss we need isn't the usual categorical crossentropy. Notice that the weights have to be applied to the log of the activation &lt;em&gt;before&lt;/em&gt; the pixelwise sum is evaluated. My solution to this was to incorporate the weighing of the log of the activation into the Keras model itself, and leave only the aggregation to the loss function. Thus, the model ends up doing more than just generating the final set of softmax activations. It also takes the log of the activations and applies the weights to it. Therefore, the weight maps too become a part of the computational graph of the model - unlike in the case of conventional class weights, where it can be supplied at the time of loss calculation. So now the model takes three inputs - the images, their labels and their weight maps.&lt;/p&gt;
+&lt;p&gt;Thanks to Keras' beautiful functional API, all of this amounts to adding a few non-trainable layers to the model and writing a custom loss function to mimic only the aggregation of the categorical crossentropy function.&lt;/p&gt;
+&lt;p&gt;The entire script for the model is available &lt;a href="https://github.com/jaidevd/jaidevd.github.io/blob/source/blog/posts/code/weighted_loss_unet.py"&gt;here&lt;/a&gt;, but the essence of it is as follows:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;keras.layers&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Input&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Conv2D&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Lambda&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;multiply&lt;/span&gt; &lt;span class="c1"&gt;# etc&lt;/span&gt;
+&lt;span class="c1"&gt;# Start making the UNET model as usual&lt;/span&gt;
+
+&lt;span class="n"&gt;image_input&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Input&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;image_height&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;image_width&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n_channels&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;conv1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Conv2D&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;64&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)(&lt;/span&gt;&lt;span class="n"&gt;image_input&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# add other layers&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Final 1 x 1 trainable conv layer that does the softmax.&lt;/span&gt;
+&lt;span class="n"&gt;softmax_op&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Conv2D&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_classes&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;activation&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'softmax'&lt;/span&gt;&lt;span class="p"&gt;)(&lt;/span&gt;&lt;span class="n"&gt;previous_layer&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Add a few non trainable layers to mimic the computation of the crossentropy&lt;/span&gt;
+&lt;span class="c1"&gt;# loss, so that the actual loss function just has to peform the&lt;/span&gt;
+&lt;span class="c1"&gt;# aggregation.&lt;/span&gt;
+&lt;span class="n"&gt;normalize_activation&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Lambda&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;tf&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reduce_sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_shape&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;))(&lt;/span&gt;&lt;span class="n"&gt;softmax_op&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;clip_activation&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Lambda&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;tf&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;clip_by_value&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_epsilon&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;1.&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;_epsilon&lt;/span&gt;&lt;span class="p"&gt;))(&lt;/span&gt;&lt;span class="n"&gt;normalize_activation&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;log_activation&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Lambda&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;K&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))(&lt;/span&gt;&lt;span class="n"&gt;clip_activation&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Add a new input to serve as the source for the weight maps&lt;/span&gt;
+&lt;span class="n"&gt;weight_map_ip&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Input&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;image_height&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;image_width&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;weighted_softmax&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;multiply&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;log_activation&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;weight_map_ip&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+
+&lt;span class="n"&gt;model&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Model&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;inputs&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;image_input&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;weight_map_ip&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;outputs&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;weighted_softmax&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This model can now be compiled and trained as usual. Note that the three &lt;code&gt;Lambda&lt;/code&gt; layers are identical to the operations in the &lt;a href="https://github.com/keras-team/keras/blob/2.2.2/keras/backend/tensorflow_backend.py#L3181"&gt;&lt;code&gt;keras.backend.tensorflow_backend.catgorical_crossentropy&lt;/code&gt;&lt;/a&gt;. So essentially we have swallowed most of the functionality of the cross entropy loss into the model itself. I should re-emphasize that this had to be done because the weighted loss we wanted could not have been possible with the default loss function, since the scaling of the log of the activations (with the precomputed weights) has to be done &lt;em&gt;before&lt;/em&gt; the loss is aggregated.&lt;/p&gt;
+&lt;p&gt;I discovered the UNet paper a few months ago during the &lt;a href="https://www.kaggle.com/c/data-science-bowl-2018"&gt;Data Science Bowl 2018&lt;/a&gt; competition on Kaggle. I spent a better part of three weeks on implementing the weight maps and incorporating them into my UNet. And it paid off fairly well - I jumped 504 places on the public leaderboard. In hindsight, data augmentation would have had the same (or perhaps a better) effect, but that fact that I was able to all of this shows how beautifully Keras' (and indeed, Tensorflow's) functional API has been designed.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;
+&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h4 id="References"&gt;References&lt;a class="anchor-link" href="https://jaidevd.github.io/posts/weighted-loss-functions-for-instance-segmentation/#References"&gt;¶&lt;/a&gt;&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;
+Olaf Ronneberger, Philipp Fischer: “U-Net: Convolutional Networks for Biomedical Image Segmentation”, 2015; &lt;a href="http://arxiv.org/abs/1505.04597"&gt;arXiv:1505.04597&lt;/a&gt;.
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;</description><category>computer-vision</category><category>deep-learning</category><category>keras</category><category>scipy</category><category>tensorflow</category><guid>https://jaidevd.github.io/posts/weighted-loss-functions-for-instance-segmentation/</guid><pubDate>Fri, 17 Aug 2018 13:50:09 GMT</pubDate></item><item><title>Limitations of the Fourier Transform: Need for a Data Driven Approach</title><link>https://jaidevd.github.io/posts/limitations-of-the-fourier-transform-need-for-a-data-driven-approach/</link><dc:creator>Jaidev Deshpande</dc:creator><description>&lt;div class="cell border-box-sizing text_cell rendered"&gt;
 &lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
